@@ -205,10 +205,7 @@
                 android:layout_weight="1"
                 android:layout_marginRight="32dp"
                 android:src="@drawable/ic_edit_image" />
-
-
         </LinearLayout>
-
     </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

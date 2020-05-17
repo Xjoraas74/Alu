@@ -3,12 +3,14 @@ package com.example.zoomyn
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
+import kotlin.math.min
 import kotlin.math.roundToInt
+
 
 class EditPhotoActivity : AppCompatActivity() {
 
@@ -19,18 +21,31 @@ class EditPhotoActivity : AppCompatActivity() {
         //получение фотографии
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
-        var fileUri = Uri.parse(imagePath)
+        val fileUri = Uri.parse(imagePath)
         imageToEdit.setImageURI(fileUri)
 
-        //присваивание компонентам ImageView полученную фотографию
-        buttonFilterFirst.setImageURI(fileUri)
-        buttonFilterSecond.setImageURI(fileUri)
-        buttonFilterThird.setImageURI(fileUri)
-        buttonFilterFourth.setImageURI(fileUri)
+        //конвертация полученного изображения в Bitmap
+        var bmpEditImage = MediaStore.Images.Media.getBitmap(this.contentResolver, fileUri)
+
+        //создание изображения на кнопках выбора фильтра
+        var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
+
+        buttonChooseFilters = blackAndWhiteFilter(bmpEditImage)
+        buttonFilterFirst.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = negativeFilter(bmpEditImage)
+        buttonFilterSecond.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = sepiaFilter(bmpEditImage)
+        buttonFilterThird.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = grayScaleFilter(bmpEditImage)
+        buttonFilterFourth.setImageBitmap(buttonChooseFilters)
+
+        //присваивание компонентам ImageButton полученную фотографию (временно)
         buttonFilterFifth.setImageURI(fileUri)
         buttonFilterSixth.setImageURI(fileUri)
         buttonFilterSeventh.setImageURI(fileUri)
-        buttonFilterEighth.setImageURI(fileUri)
         buttonFilterEighth.setImageURI(fileUri)
         buttonFilterNinth.setImageURI(fileUri)
         buttonFilterTenth.setImageURI(fileUri)
@@ -56,6 +71,8 @@ class EditPhotoActivity : AppCompatActivity() {
         }
     }
 
+    //цветокоррекция и цветовые фильтры
+    //чёрно-белый фильтр
     private fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         var gray: Int
@@ -74,5 +91,59 @@ class EditPhotoActivity : AppCompatActivity() {
         return new
     }
 
+    //фильтр "Негатив"
+    private fun negativeFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val lookupTable = IntArray(0x1000000)
+        /*
+        R = 255 – R
+        G = 255 – G
+        B = 255 – B
+        */
+        for (i in 0 until 0x1000000) {
+            lookupTable[i] = Color.rgb(255 - Color.red(i), 255 - Color.green(i), 255 - Color.blue(i))
+        }
+        setPixelsWithLookupTable(orig, new, lookupTable)
+        return new
+    }
+
+    //фильтр "сепия"
+    private fun sepiaFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val lookupTable = IntArray(0x1000000)
+        /*
+        outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
+        outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
+        outputBlue = (inputRed * .272) + (inputGreen *.534) + (inputBlue * .131)
+
+        if greater than 255, round to 255
+        */
+        for (i in 0 until 0x1000000) {
+            lookupTable[i] = Color.rgb(
+                min(255, (0.393 * Color.red(i) + 0.769 * Color.green(i) + 0.189 * Color.blue(i)).roundToInt()),
+                min(255, (0.349 * Color.red(i) + 0.686 * Color.green(i) + 0.168 * Color.blue(i)).roundToInt()),
+                min(255, (0.272 * Color.red(i) + 0.534 * Color.green(i) + 0.131 * Color.blue(i)).roundToInt())
+            )
+        }
+
+        setPixelsWithLookupTable(orig, new, lookupTable)
+        return new
+    }
+
+    //чёрно-белый с оттенками серого
+    private fun grayScaleFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        var gray: Int
+        val lookupTable = IntArray(0x1000000)
+
+        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
+        for (i in 0 until 0x1000000) {
+            gray=(Color.red(i) * 0.3 + Color.green(i) * 0.59 + Color.blue(i) * 0.11).roundToInt()
+            lookupTable[i] = Color.rgb(gray, gray, gray)
+        }
+
+        setPixelsWithLookupTable(orig, new, lookupTable)
+        return new
+    }
 
 }
