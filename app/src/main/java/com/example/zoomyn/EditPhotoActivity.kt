@@ -18,9 +18,8 @@ class EditPhotoActivity : AppCompatActivity() {
 
         //получение фотографии
         val intent = intent
-        val image_path = intent.getStringExtra("imagePath")
-        var fileUri: Uri
-        fileUri = Uri.parse(image_path)
+        val imagePath = intent.getStringExtra("imagePath")
+        var fileUri = Uri.parse(imagePath)
         imageToEdit.setImageURI(fileUri)
 
         //присваивание компонентам ImageView полученную фотографию
@@ -36,16 +35,17 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonFilterNinth.setImageURI(fileUri)
         buttonFilterTenth.setImageURI(fileUri)
 
-        buttonEdit.setOnClickListener {
-            val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            startActivity(intent)
-        }
-
+        //функционирование кнопок верхнего меню
         buttonBack.setOnClickListener {
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)
         }
 
+        //функционирование кнопки "Редактировать"
+        buttonEdit.setOnClickListener {
+            val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setPixelsWithLookupTable(orig: Bitmap, new: Bitmap, table: IntArray) {
@@ -70,10 +70,8 @@ class EditPhotoActivity : AppCompatActivity() {
                 Color.WHITE
             }
         }
-
         setPixelsWithLookupTable(orig, new, lookupTable)
         return new
-
     }
 
 
