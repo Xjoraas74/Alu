@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Атрибут android:opacity=”opaque” для предотвращения черных миганий -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+<!-- Атрибут android:opacity="opaque" для предотвращения черных миганий -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:opacity="opaque" android:orientation="vertical">
     <item android:drawable="@android:color/white"/>
     <item>
         <bitmap
-            android:src="@drawable/launcher_screen"
-            android:gravity="center"/>
+            android:gravity="center|fill"
+            android:src="@drawable/launcher_screen" />
     </item>
 </layer-list>
+
+

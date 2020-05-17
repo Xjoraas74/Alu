@@ -16,19 +16,34 @@ class EditPhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo)
 
+        //получение фотографии
         val intent = intent
         val image_path = intent.getStringExtra("imagePath")
         var fileUri: Uri
         fileUri = Uri.parse(image_path)
         imageToEdit.setImageURI(fileUri)
 
+        //присваивание компонентам ImageView полученную фотографию
         buttonFilterFirst.setImageURI(fileUri)
         buttonFilterSecond.setImageURI(fileUri)
         buttonFilterThird.setImageURI(fileUri)
+        buttonFilterFourth.setImageURI(fileUri)
+        buttonFilterFifth.setImageURI(fileUri)
+        buttonFilterSixth.setImageURI(fileUri)
+        buttonFilterSeventh.setImageURI(fileUri)
+        buttonFilterEighth.setImageURI(fileUri)
+        buttonFilterEighth.setImageURI(fileUri)
+        buttonFilterNinth.setImageURI(fileUri)
+        buttonFilterTenth.setImageURI(fileUri)
 
         buttonEdit.setOnClickListener {
             val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
             startActivity(intent)
+        }
+
+        buttonBack.setOnClickListener {
+            val i = Intent(this, MainActivity::class.java)
+            startActivity(i)
         }
 
     }
