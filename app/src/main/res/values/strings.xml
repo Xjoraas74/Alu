@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Zoomyn</string>
+    <string name="camera">камера</string>
+    <string name="library">галерея</string>
+    <string name="icon_heart">&#xf083;</string>
+    <string name="game">сыграй!</string>
+    <string name="filter">Фильтр</string>
+    <string name="edit">Редактировать</string>
+    <string name="undo">Отмена</string>
+    <string name="filterNameFirst">Normal</string>
+    <string name="turn">Поворот</string>
+    <string name="scale">Масштаб</string>
+    <string name="segmentation">Сегментация</string>
+    <string name="retouch">Ретушь</string>
+    <string name="cancel">Назад</string>
+    <string name="done">Готово</string>
+    <string name="headerTurn">Поворот</string>
+</resources>
