@@ -2,6 +2,7 @@ package com.example.zoomyn
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,15 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 class EditPhotoActivity : AppCompatActivity() {
+
+    companion object {
+        const val redColor = Color.RED
+        const val blueColor = Color.BLUE
+        const val greenColor = Color.GREEN
+        const val yellowColor = Color.YELLOW
+        const val magentaColor = Color.MAGENTA
+        const val cyanColor = Color.CYAN
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +51,23 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonChooseFilters = grayScaleFilter(bmpEditImage)
         buttonFilterFourth.setImageBitmap(buttonChooseFilters)
 
-        //присваивание компонентам ImageButton полученную фотографию (временно)
-        buttonFilterFifth.setImageURI(fileUri)
-        buttonFilterSixth.setImageURI(fileUri)
-        buttonFilterSeventh.setImageURI(fileUri)
-        buttonFilterEighth.setImageURI(fileUri)
-        buttonFilterNinth.setImageURI(fileUri)
-        buttonFilterTenth.setImageURI(fileUri)
+        buttonChooseFilters = coloredFilter(bmpEditImage, redColor)
+        buttonFilterFifth.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = coloredFilter(bmpEditImage, blueColor)
+        buttonFilterSixth.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = coloredFilter(bmpEditImage, greenColor)
+        buttonFilterSeventh.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = coloredFilter(bmpEditImage, yellowColor)
+        buttonFilterEighth.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = coloredFilter(bmpEditImage, magentaColor)
+        buttonFilterNinth.setImageBitmap(buttonChooseFilters)
+
+        buttonChooseFilters = coloredFilter(bmpEditImage, cyanColor)
+        buttonFilterTenth.setImageBitmap(buttonChooseFilters)
 
         //функционирование кнопок выбора фильтра
         buttonFilterFirst.setOnClickListener {
@@ -67,27 +87,27 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonFilterFifth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, redColor))
         }
 
         buttonFilterSixth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, blueColor))
         }
 
         buttonFilterSeventh.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, greenColor))
         }
 
         buttonFilterEighth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, yellowColor))
         }
 
         buttonFilterNinth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, magentaColor))
         }
 
         buttonFilterTenth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, cyanColor))
         }
 
         //функционирование кнопок верхнего меню
@@ -180,6 +200,19 @@ class EditPhotoActivity : AppCompatActivity() {
         for (i in 0 until 0x1000000) {
             gray=(Color.red(i) * 0.3 + Color.green(i) * 0.59 + Color.blue(i) * 0.11).roundToInt()
             lookupTable[i] = Color.rgb(gray, gray, gray)
+        }
+
+        setPixelsWithLookupTable(orig, new, lookupTable)
+        return new
+    }
+
+    //цветной фильтр
+    private fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
+        val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val lookupTable = IntArray(0x1000000)
+
+        for (i in 0 until 0x1000000) {
+            lookupTable[i] = col and i
         }
 
         setPixelsWithLookupTable(orig, new, lookupTable)

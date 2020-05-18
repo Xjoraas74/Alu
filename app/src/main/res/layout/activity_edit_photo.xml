@@ -110,7 +110,7 @@
         app:layout_constraintVertical_bias="0.992" />
 
     <HorizontalScrollView
-        android:layout_width="300dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -131,7 +131,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -139,7 +139,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -147,7 +147,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -155,7 +155,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -163,7 +163,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -171,7 +171,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -179,7 +179,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -187,7 +187,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -195,7 +195,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
 
             <ImageButton
@@ -203,7 +203,7 @@
                 android:layout_width="79dp"
                 android:layout_height="84dp"
                 android:layout_weight="1"
-                android:layout_marginRight="32dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/ic_edit_image" />
         </LinearLayout>
     </HorizontalScrollView>
