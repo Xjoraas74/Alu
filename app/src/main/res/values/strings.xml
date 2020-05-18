@@ -15,4 +15,14 @@
     <string name="cancel">Назад</string>
     <string name="done">Готово</string>
     <string name="headerTurn">Поворот</string>
+    <string name="nameOfFirstFilter">Black-White</string>
+    <string name="nameOfSecondFilter">Negative</string>
+    <string name="nameOfThirdFilter">Sepia</string>
+    <string name="nameOfFourthFilter">Gray</string>
+    <string name="nameOfSixthFilter">Blue</string>
+    <string name="nameOfFifthFilter">Red</string>
+    <string name="nameOfSeventhFilter">Green</string>
+    <string name="nameOfEighthFilter">Yellow</string>
+    <string name="nameOfNinthFilter">Magenta</string>
+    <string name="nameOfTenthFilter">Cyan</string>
 </resources>
