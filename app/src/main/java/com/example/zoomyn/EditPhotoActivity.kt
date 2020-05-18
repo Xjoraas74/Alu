@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-
 class EditPhotoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,13 +49,54 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonFilterNinth.setImageURI(fileUri)
         buttonFilterTenth.setImageURI(fileUri)
 
+        //функционирование кнопок выбора фильтра
+        buttonFilterFirst.setOnClickListener {
+            imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
+        }
+
+        buttonFilterSecond.setOnClickListener {
+            imageToEdit.setImageBitmap(negativeFilter(bmpEditImage))
+        }
+
+        buttonFilterThird.setOnClickListener {
+            imageToEdit.setImageBitmap(sepiaFilter(bmpEditImage))
+        }
+
+        buttonFilterFourth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterFifth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterSixth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterSeventh.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterEighth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterNinth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
+        buttonFilterTenth.setOnClickListener {
+            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+        }
+
         //функционирование кнопок верхнего меню
         buttonBack.setOnClickListener {
             val i = Intent(this, MainActivity::class.java)
             startActivity(i)
         }
 
-        //функционирование кнопки "Редактировать"
+        //функционирование кнопки "Редактировать" - нижнее меню
         buttonEdit.setOnClickListener {
             val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
             startActivity(intent)
