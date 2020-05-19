@@ -200,8 +200,9 @@ class TestEditPhotoActivity : AppCompatActivity() {
 
     /*am 5 means amount is 5%*/
     private fun unsharpMasking(orig: Bitmap, am: Int, rad: Int, thres: Int): Bitmap {
-        // should I really crop it?
         val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
 
         // creates Gaussian distribution from row of Pascal's triangle excluding two elements on both ends
         val help = DoubleArray(rad * 2 + 5)
@@ -233,23 +234,24 @@ class TestEditPhotoActivity : AppCompatActivity() {
         var blue: Int
         var kAdjusted: Int
 
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         for (i in 0 until new.height) {
             for (j in 0 until new.width) {
                 for (k in gaussianDistribution.indices) {
                     kAdjusted = min(new.width - 1, max(0, j + k))
-                    convolvedHorizontallyRed += Color.red(orig.getPixel(kAdjusted, i)) * gaussianDistribution[k]
-                    convolvedHorizontallyGreen += Color.green(orig.getPixel(kAdjusted, i)) * gaussianDistribution[k]
-                    convolvedHorizontallyBlue += Color.blue(orig.getPixel(kAdjusted, i)) * gaussianDistribution[k]
+                    convolvedHorizontallyRed += Color.red(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyGreen += Color.green(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
                 }
                 for (k in gaussianDistribution.indices) {
                     kAdjusted = min(new.height - 1, max(0, i + k))
-                    convolvedVerticallyRed += Color.red(orig.getPixel(j, kAdjusted)) * gaussianDistribution[k]
-                    convolvedVerticallyGreen += Color.green(orig.getPixel(j, kAdjusted)) * gaussianDistribution[k]
-                    convolvedVerticallyBlue += Color.blue(orig.getPixel(j, kAdjusted)) * gaussianDistribution[k]
+                    convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
+                    convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
+                    convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
                 }
-                red = Color.red(orig.getPixel(j, i))
-                green = Color.green(orig.getPixel(j, i))
-                blue = Color.blue(orig.getPixel(j, i))
+                red = Color.red(pixelsOrig[i * orig.width + j])
+                green = Color.green(pixelsOrig[i * orig.width + j])
+                blue = Color.blue(pixelsOrig[i * orig.width + j])
                 redDiff = red - ((convolvedHorizontallyRed + convolvedVerticallyRed) / 2).roundToInt()
                 greenDiff = green - ((convolvedHorizontallyGreen + convolvedVerticallyGreen) / 2).roundToInt()
                 blueDiff = blue - ((convolvedHorizontallyBlue + convolvedVerticallyBlue) / 2).roundToInt()
@@ -267,7 +269,7 @@ class TestEditPhotoActivity : AppCompatActivity() {
                 red = min(255, red)
                 green = min(255, green)
                 blue = min(255, blue)
-                new.setPixel(j, i, Color.rgb(red, green, blue))
+                pixelsNew[i * new.width + j] = Color.rgb(red, green, blue)
 
                 convolvedHorizontallyRed = 0.0
                 convolvedHorizontallyGreen = 0.0
@@ -278,13 +280,14 @@ class TestEditPhotoActivity : AppCompatActivity() {
             }
         }
 
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
     private fun apply(orig: ImageView, new: ImageView/*, value: Double*/) {
-        /*unsharpMasking((orig.drawable as BitmapDrawable).bitmap, 800, 1, 10).apply {
+        unsharpMasking((orig.drawable as BitmapDrawable).bitmap, 80, 5, 15).apply {
             new.setImageBitmap(this)
-        }*/
+        }
         /*coloredFilter((orig.drawable as BitmapDrawable).bitmap, 0xffff00).apply {
             new.setImageBitmap(this)
         }*/
@@ -294,9 +297,9 @@ class TestEditPhotoActivity : AppCompatActivity() {
         /*rotateClockwiseByDegrees((orig.drawable as BitmapDrawable).bitmap, 45).apply {
             new.setImageBitmap(this)
         }*/
-        scale((orig.drawable as BitmapDrawable).bitmap, 0.05).apply {
+        /*scale((orig.drawable as BitmapDrawable).bitmap, 0.05).apply {
             new.setImageBitmap(this)
-        }
+        }*/
         /*rotate90DegreesClockwise((orig.drawable as BitmapDrawable).bitmap). apply {
             new.setImageBitmap(this)
         }*/
