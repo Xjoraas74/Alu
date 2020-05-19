@@ -36,12 +36,6 @@ class TestEditPhotoActivity : AppCompatActivity() {
         }
         new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
 
-        /*for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
-                new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))
-            }
-        }*/
-
         return new
     }
 
@@ -50,6 +44,9 @@ class TestEditPhotoActivity : AppCompatActivity() {
         val a = aDeg * PI / 180
         val iCentreX = new.width / 2
         val iCentreY = new.height / 2
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
 
         var x: Int
         var y: Int
@@ -101,38 +98,32 @@ class TestEditPhotoActivity : AppCompatActivity() {
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY
 
-                clrTopLeft = orig.getPixel(iFloorX, iFloorY);
-                clrTopRight = orig.getPixel(iCeilingX, iFloorY);
-                clrBottomLeft = orig.getPixel(iFloorX, iCeilingY);
-                clrBottomRight = orig.getPixel(iCeilingX, iCeilingY);
+                // indices in pixelsOrig:
+                clrTopLeft = iFloorY * orig.width + iFloorX
+                clrTopRight = iFloorY * orig.width + iCeilingX
+                clrBottomLeft = iCeilingY * orig.width + iFloorX
+                clrBottomRight = iCeilingY * orig.width + iCeilingX
 
                 // linearly interpolate horizontally between top neighbours
-                fTopRed = (1 - fDeltaX) * Color.red(clrTopLeft) + fDeltaX * Color.red(clrTopRight)
-                fTopGreen = (1 - fDeltaX) * Color.green(clrTopLeft) + fDeltaX * Color.green(clrTopRight)
-                fTopBlue = (1 - fDeltaX) * Color.blue(clrTopLeft) + fDeltaX * Color.blue(clrTopRight)
+                fTopRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrTopLeft]) + fDeltaX * Color.red(pixelsOrig[clrTopRight])
+                fTopGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrTopLeft]) + fDeltaX * Color.green(pixelsOrig[clrTopRight])
+                fTopBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrTopLeft]) + fDeltaX * Color.blue(pixelsOrig[clrTopRight])
 
                 // linearly interpolate horizontally between bottom neighbours
-                fBottomRed = (1 - fDeltaX) * Color.red(clrBottomLeft) + fDeltaX * Color.red(clrBottomRight)
-                fBottomGreen = (1 - fDeltaX) * Color.green(clrBottomLeft) + fDeltaX * Color.green(clrBottomRight)
-                fBottomBlue = (1 - fDeltaX) * Color.blue(clrBottomLeft) + fDeltaX * Color.blue(clrBottomRight)
+                fBottomRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.red(pixelsOrig[clrBottomRight])
+                fBottomGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.green(pixelsOrig[clrBottomRight])
+                fBottomBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.blue(pixelsOrig[clrBottomRight])
 
                 // linearly interpolate vertically between top and bottom interpolated results
                 iRed = ((1 - fDeltaY) * fTopRed + fDeltaY * fBottomRed).roundToInt()
                 iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
                 iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
 
-                /* make sure colour values are valid
-                if (iRed < 0) iRed = 0;
-                if (iRed > 255) iRed = 255;
-                if (iGreen < 0) iGreen = 0;
-                if (iGreen > 255) iGreen = 255;
-                if (iBlue < 0) iBlue = 0;
-                if (iBlue > 255) iBlue = 255;*/
-
-                new.setPixel(j, i, Color.rgb(iRed, iGreen, iBlue))
+                pixelsNew[i * new.width + j] = Color.rgb(iRed, iGreen, iBlue)
             }
         }
 
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
@@ -295,14 +286,14 @@ class TestEditPhotoActivity : AppCompatActivity() {
         /*blackAndWhiteFilter((orig.drawable as BitmapDrawable).bitmap).apply {
             new.setImageBitmap(this)
         }*/
-        /*rotateClockwiseByDegrees((orig.drawable as BitmapDrawable).bitmap, -45).apply {
+        rotateClockwiseByDegrees((orig.drawable as BitmapDrawable).bitmap, 45).apply {
             new.setImageBitmap(this)
-        }*/
+        }
         /*scale((orig.drawable as BitmapDrawable).bitmap, .1).apply {
             new.setImageBitmap(this)
         }*/
-        rotate90DegreesClockwise((orig.drawable as BitmapDrawable).bitmap). apply {
+        /*rotate90DegreesClockwise((orig.drawable as BitmapDrawable).bitmap). apply {
             new.setImageBitmap(this)
-        }
+        }*/
     }
 }
