@@ -24,22 +24,22 @@ class TestEditPhotoActivity : AppCompatActivity() {
     private fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
 
-        /*val pixelsOrig = IntArray((orig.width - 1) * (orig.height - 1))
-        val pixelsNew = IntArray((orig.width - 1) * (orig.height - 1))
-        orig.getPixels(pixelsOrig, 0, orig.width - 1, 0, 0, orig.width - 1, orig.height - 1)
+        val pixelsOrig = IntArray((orig.width - 1) * (orig.height - 1) + 1)
+        val pixelsNew = IntArray((orig.width - 1) * (orig.height - 1) + 1)
+        orig.getPixels(pixelsOrig, 1, orig.width - 1, 0, 0, orig.width - 1, orig.height - 1)
         // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
         for (i in 0 until new.height) {
             for (j in 0 until new.width) {
                 pixelsNew[i * (new.width - 1) + j] = pixelsOrig[(orig.height - 1 - j) * (orig.width - 1) + i]
             }
         }
-        new.setPixels(pixelsNew, 0, new.width - 1, 0, 0, new.width - 1, new.height - 1)*/
+        new.setPixels(pixelsNew, 0, new.width - 1, 0, 0, new.width - 1, new.height - 1)
 
-        for (i in 0 until new.height) {
+        /*for (i in 0 until new.height) {
             for (j in 0 until new.width) {
                 new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))
             }
-        }
+        }*/
 
         return new
     }
@@ -297,7 +297,10 @@ class TestEditPhotoActivity : AppCompatActivity() {
         /*rotateClockwiseByDegrees((orig.drawable as BitmapDrawable).bitmap, -45).apply {
             new.setImageBitmap(this)
         }*/
-        scale((orig.drawable as BitmapDrawable).bitmap, .1).apply {
+        /*scale((orig.drawable as BitmapDrawable).bitmap, .1).apply {
+            new.setImageBitmap(this)
+        }*/
+        rotate90DegreesClockwise((orig.drawable as BitmapDrawable).bitmap). apply {
             new.setImageBitmap(this)
         }
     }
