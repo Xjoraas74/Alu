@@ -124,7 +124,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun setPixelsWithLookupTable(orig: Bitmap, new: Bitmap, table: IntArray) {
-        val pixels = IntArray((orig.width) * (orig.height))
+        val pixels = IntArray(orig.width * orig.height)
         orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
         for (i in pixels.indices) {
             pixels[i] = table[pixels[i] and 0xffffff] or 0xff000000.toInt()

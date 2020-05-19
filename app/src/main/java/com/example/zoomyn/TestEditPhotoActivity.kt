@@ -24,16 +24,17 @@ class TestEditPhotoActivity : AppCompatActivity() {
     private fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
 
-        val pixelsOrig = IntArray((orig.width - 1) * (orig.height - 1) + 1)
-        val pixelsNew = IntArray((orig.width - 1) * (orig.height - 1) + 1)
-        orig.getPixels(pixelsOrig, 1, orig.width - 1, 0, 0, orig.width - 1, orig.height - 1)
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+        val pixelsCount = orig.width * orig.height
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
         for (i in 0 until new.height) {
             for (j in 0 until new.width) {
-                pixelsNew[i * (new.width - 1) + j] = pixelsOrig[(orig.height - 1 - j) * (orig.width - 1) + i]
+                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
             }
         }
-        new.setPixels(pixelsNew, 0, new.width - 1, 0, 0, new.width - 1, new.height - 1)
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
 
         /*for (i in 0 until new.height) {
             for (j in 0 until new.width) {
