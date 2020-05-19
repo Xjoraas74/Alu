@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.widget.ImageView
+import kotlinx.android.synthetic.main.activity_test_edit_photo.*
 import kotlin.math.*
 
 class TestEditPhotoActivity : AppCompatActivity() {
@@ -12,10 +15,25 @@ class TestEditPhotoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_edit_photo)
+
+        button.setOnClickListener {
+            apply(imageViewOrig, imageViewNew)
+        }
     }
 
     private fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
+
+        /*val pixelsOrig = IntArray((orig.width - 1) * (orig.height - 1))
+        val pixelsNew = IntArray((orig.width - 1) * (orig.height - 1))
+        orig.getPixels(pixelsOrig, 0, orig.width - 1, 0, 0, orig.width - 1, orig.height - 1)
+        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
+        for (i in 0 until new.height) {
+            for (j in 0 until new.width) {
+                pixelsNew[i * (new.width - 1) + j] = pixelsOrig[(orig.height - 1 - j) * (orig.width - 1) + i]
+            }
+        }
+        new.setPixels(pixelsNew, 0, new.width - 1, 0, 0, new.width - 1, new.height - 1)*/
 
         for (i in 0 until new.height) {
             for (j in 0 until new.width) {
@@ -23,7 +41,7 @@ class TestEditPhotoActivity : AppCompatActivity() {
             }
         }
 
-        return  new
+        return new
     }
 
     private fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
@@ -264,5 +282,23 @@ class TestEditPhotoActivity : AppCompatActivity() {
         }
 
         return new
+    }
+
+    private fun apply(orig: ImageView, new: ImageView/*, value: Double*/) {
+        /*unsharpMasking((orig.drawable as BitmapDrawable).bitmap, 800, 1, 10).apply {
+            new.setImageBitmap(this)
+        }*/
+        /*coloredFilter((orig.drawable as BitmapDrawable).bitmap, 0xffff00).apply {
+            new.setImageBitmap(this)
+        }*/
+        /*blackAndWhiteFilter((orig.drawable as BitmapDrawable).bitmap).apply {
+            new.setImageBitmap(this)
+        }*/
+        /*rotateClockwiseByDegrees((orig.drawable as BitmapDrawable).bitmap, -45).apply {
+            new.setImageBitmap(this)
+        }*/
+        scale((orig.drawable as BitmapDrawable).bitmap, .1).apply {
+            new.setImageBitmap(this)
+        }
     }
 }
