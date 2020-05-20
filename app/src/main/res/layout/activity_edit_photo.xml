@@ -17,10 +17,10 @@
         android:src="@drawable/ic_edit_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textCancel"
-        app:layout_constraintVertical_bias="0.062" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.226" />
 
     <ImageButton
         android:id="@+id/buttonBack"
@@ -52,7 +52,9 @@
         android:id="@+id/textCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:background="@null"
+        android:gravity="left|center"
         android:stateListAnimator="@null"
         android:text="@string/undo"
         android:textSize="16sp"
@@ -61,20 +63,20 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/buttonUndo"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.007" />
+        app:layout_constraintVertical_bias="0.013" />
 
     <ImageButton
         android:id="@+id/buttonSave"
-        android:layout_width="27dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@null"
         android:src="@drawable/ic_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.029999971" />
+        app:layout_constraintVertical_bias="0.023" />
 
     <Button
         android:id="@+id/buttonFilter"
@@ -123,7 +125,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayoutScrollView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
@@ -131,15 +133,17 @@
                 android:id="@+id/linearLayoutNormalFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfNormalFilter"
-                    android:layout_width="77dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfNormalFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -148,10 +152,9 @@
                     android:id="@+id/buttonNormalFilter"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
 
@@ -159,15 +162,17 @@
                 android:id="@+id/linearLayoutFirstFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfFirstFilter"
-                    android:layout_width="80dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfFirstFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -176,25 +181,26 @@
                     android:id="@+id/buttonFilterFirst"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linearLayouSecondFilter"
+                android:id="@+id/linearLayoutSecondFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfSecondFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfSecondFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -203,25 +209,26 @@
                     android:id="@+id/buttonFilterSecond"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutFourthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfFourthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfFourthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -230,25 +237,26 @@
                     android:id="@+id/buttonFilterFourth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutThirdFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfThirdFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfThirdFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -257,25 +265,26 @@
                     android:id="@+id/buttonFilterThird"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutFifthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfFifthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfFifthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -284,25 +293,26 @@
                     android:id="@+id/buttonFilterFifth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutSixthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfSixthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfSixthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -311,25 +321,26 @@
                     android:id="@+id/buttonFilterSixth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutSeventhFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfSeventhFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfSeventhFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -338,25 +349,26 @@
                     android:id="@+id/buttonFilterSeventh"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutEighthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfEighthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfEighthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -365,25 +377,26 @@
                     android:id="@+id/buttonFilterEighth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutNinthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfNinthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfNinthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -392,25 +405,26 @@
                     android:id="@+id/buttonFilterNinth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayoutTenthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:id="@+id/nameOfTenthFilter"
-                    android:layout_width="76dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/nameOfTenthFilter"
                     android:textColor="@color/colorGray"
                     android:textSize="13sp" />
@@ -419,12 +433,13 @@
                     android:id="@+id/buttonFilterTenth"
                     android:layout_width="79dp"
                     android:layout_height="84dp"
-                    android:layout_marginRight="20dp"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_edit_image"
-                    android:layout_marginEnd="20dp" />
+                    android:src="@drawable/ic_edit_image" />
+
             </LinearLayout>
+
         </LinearLayout>
+
     </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

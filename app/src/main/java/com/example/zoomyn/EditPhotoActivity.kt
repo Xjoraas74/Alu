@@ -179,7 +179,7 @@ class EditPhotoActivity : AppCompatActivity() {
         return new
     }
 
-    //фильтр "Негатив"
+    //фильтр "негатив"
     private fun negativeFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val lookupTable = IntArray(0x1000000)
