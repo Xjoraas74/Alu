@@ -45,6 +45,7 @@ class EditPhotoActivity : AppCompatActivity() {
         var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
         buttonChooseFilters =  decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
+        buttonNormalFilter.setImageBitmap(buttonChooseFilters)
         buttonFilterFirst.setImageBitmap( blackAndWhiteFilter(buttonChooseFilters))
         buttonFilterSecond.setImageBitmap( negativeFilter(buttonChooseFilters))
         buttonFilterThird.setImageBitmap( sepiaFilter(buttonChooseFilters))
@@ -57,6 +58,10 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonFilterTenth.setImageBitmap( coloredFilter(buttonChooseFilters, cyanColor))
 
         //функционирование кнопок выбора фильтра
+        buttonNormalFilter.setOnClickListener {
+            imageToEdit.setImageBitmap(bmpEditImage)
+        }
+
         buttonFilterFirst.setOnClickListener {
             imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
         }

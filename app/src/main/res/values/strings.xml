@@ -25,4 +25,5 @@
     <string name="nameOfEighthFilter">Yellow</string>
     <string name="nameOfNinthFilter">Magenta</string>
     <string name="nameOfTenthFilter">Cyan</string>
+    <string name="nameOfNormalFilter">Normal</string>
 </resources>
