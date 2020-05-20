@@ -8,10 +8,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore.Images
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
-import java.io.ByteArrayOutputStream
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -41,7 +39,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
-        buttonChooseFilters = getImageUri(this, bmpEditImage)?.let { decodeSampledBitmapFromFile(it, 256, 256, this) }
+        buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
         buttonNormalFilter.setImageBitmap(buttonChooseFilters)
         buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
@@ -111,15 +109,6 @@ class EditPhotoActivity : AppCompatActivity() {
             val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    //функция для получения Uri из Bitmap
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path =
-            Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
-        return Uri.parse(path)
     }
 
     //сжатие фотографии
