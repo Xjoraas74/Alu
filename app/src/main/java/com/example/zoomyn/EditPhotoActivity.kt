@@ -8,12 +8,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.provider.MediaStore.Images
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
-import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
-import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
-import kotlinx.android.synthetic.main.activity_fun_turn.*
+import java.io.ByteArrayOutputStream
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -37,25 +35,25 @@ class EditPhotoActivity : AppCompatActivity() {
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
 
-        //конвертация полученного изображения в Bitmap в сжатой версии 512*512
-        var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 512, 512, this)
+        //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
+        var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
         imageToEdit.setImageBitmap(bmpEditImage)
 
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
-        buttonChooseFilters =  decodeSampledBitmapFromFile(fileUri, 256, 256, this)
+        buttonChooseFilters = getImageUri(this, bmpEditImage)?.let { decodeSampledBitmapFromFile(it, 256, 256, this) }
 
         buttonNormalFilter.setImageBitmap(buttonChooseFilters)
-        buttonFilterFirst.setImageBitmap( blackAndWhiteFilter(buttonChooseFilters))
-        buttonFilterSecond.setImageBitmap( negativeFilter(buttonChooseFilters))
-        buttonFilterThird.setImageBitmap( sepiaFilter(buttonChooseFilters))
-        buttonFilterFourth.setImageBitmap( grayScaleFilter(buttonChooseFilters))
-        buttonFilterFifth.setImageBitmap( coloredFilter(buttonChooseFilters, redColor))
-        buttonFilterSixth.setImageBitmap( coloredFilter(buttonChooseFilters, blueColor))
-        buttonFilterSeventh.setImageBitmap( coloredFilter(buttonChooseFilters, greenColor))
-        buttonFilterEighth.setImageBitmap( coloredFilter(buttonChooseFilters, yellowColor))
-        buttonFilterNinth.setImageBitmap( coloredFilter(buttonChooseFilters, magentaColor))
-        buttonFilterTenth.setImageBitmap( coloredFilter(buttonChooseFilters, cyanColor))
+        buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
+        buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
+        buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
+        buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
+        buttonFilterFifth.setImageBitmap(coloredFilter(buttonChooseFilters, redColor))
+        buttonFilterSixth.setImageBitmap(coloredFilter(buttonChooseFilters, blueColor))
+        buttonFilterSeventh.setImageBitmap(coloredFilter(buttonChooseFilters, greenColor))
+        buttonFilterEighth.setImageBitmap(coloredFilter(buttonChooseFilters, yellowColor))
+        buttonFilterNinth.setImageBitmap(coloredFilter(buttonChooseFilters, magentaColor))
+        buttonFilterTenth.setImageBitmap(coloredFilter(buttonChooseFilters, cyanColor))
 
         //функционирование кнопок выбора фильтра
         buttonNormalFilter.setOnClickListener {
@@ -113,6 +111,15 @@ class EditPhotoActivity : AppCompatActivity() {
             val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    //функция для получения Uri из Bitmap
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path =
+            Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
+        return Uri.parse(path)
     }
 
     //сжатие фотографии
@@ -217,7 +224,6 @@ class EditPhotoActivity : AppCompatActivity() {
                 min(255, (0.272 * Color.red(i) + 0.534 * Color.green(i) + 0.131 * Color.blue(i)).roundToInt())
             )
         }
-
         setPixelsWithLookupTable(orig, new, lookupTable)
         return new
     }
@@ -233,7 +239,6 @@ class EditPhotoActivity : AppCompatActivity() {
             gray=(Color.red(i) * 0.3 + Color.green(i) * 0.59 + Color.blue(i) * 0.11).roundToInt()
             lookupTable[i] = Color.rgb(gray, gray, gray)
         }
-
         setPixelsWithLookupTable(orig, new, lookupTable)
         return new
     }
@@ -246,7 +251,6 @@ class EditPhotoActivity : AppCompatActivity() {
         for (i in 0 until 0x1000000) {
             lookupTable[i] = col and i
         }
-
         setPixelsWithLookupTable(orig, new, lookupTable)
         return new
     }
