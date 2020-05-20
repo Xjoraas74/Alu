@@ -1,14 +1,19 @@
 package com.example.zoomyn
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
+import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
+import kotlinx.android.synthetic.main.activity_fun_turn.*
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -31,43 +36,25 @@ class EditPhotoActivity : AppCompatActivity() {
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
-        imageToEdit.setImageURI(fileUri)
 
-        //конвертация полученного изображения в Bitmap
-        var bmpEditImage = MediaStore.Images.Media.getBitmap(this.contentResolver, fileUri)
+        //конвертация полученного изображения в Bitmap в сжатой версии 512*512
+        var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 512, 512, this)
+        imageToEdit.setImageBitmap(bmpEditImage)
 
         //создание изображения на кнопках выбора фильтра
-        var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
+        var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
+        buttonChooseFilters =  decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
-        buttonChooseFilters = blackAndWhiteFilter(bmpEditImage)
-        buttonFilterFirst.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = negativeFilter(bmpEditImage)
-        buttonFilterSecond.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = sepiaFilter(bmpEditImage)
-        buttonFilterThird.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = grayScaleFilter(bmpEditImage)
-        buttonFilterFourth.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, redColor)
-        buttonFilterFifth.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, blueColor)
-        buttonFilterSixth.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, greenColor)
-        buttonFilterSeventh.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, yellowColor)
-        buttonFilterEighth.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, magentaColor)
-        buttonFilterNinth.setImageBitmap(buttonChooseFilters)
-
-        buttonChooseFilters = coloredFilter(bmpEditImage, cyanColor)
-        buttonFilterTenth.setImageBitmap(buttonChooseFilters)
+        buttonFilterFirst.setImageBitmap( blackAndWhiteFilter(buttonChooseFilters))
+        buttonFilterSecond.setImageBitmap( negativeFilter(buttonChooseFilters))
+        buttonFilterThird.setImageBitmap( sepiaFilter(buttonChooseFilters))
+        buttonFilterFourth.setImageBitmap( grayScaleFilter(buttonChooseFilters))
+        buttonFilterFifth.setImageBitmap( coloredFilter(buttonChooseFilters, redColor))
+        buttonFilterSixth.setImageBitmap( coloredFilter(buttonChooseFilters, blueColor))
+        buttonFilterSeventh.setImageBitmap( coloredFilter(buttonChooseFilters, greenColor))
+        buttonFilterEighth.setImageBitmap( coloredFilter(buttonChooseFilters, yellowColor))
+        buttonFilterNinth.setImageBitmap( coloredFilter(buttonChooseFilters, magentaColor))
+        buttonFilterTenth.setImageBitmap( coloredFilter(buttonChooseFilters, cyanColor))
 
         //функционирование кнопок выбора фильтра
         buttonFilterFirst.setOnClickListener {
@@ -121,6 +108,45 @@ class EditPhotoActivity : AppCompatActivity() {
             val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    //сжатие фотографии
+    //метод для вычисления новых размеров изображения по заданными ширине и высоте
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        //ширина и длина исходного изображения
+        val (height: Int, width: Int) = options.run { outHeight to outWidth }
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+
+            val halfHeight: Int = height
+            val halfWidth: Int = width
+
+            //рассчитываем отношение высоты и ширины к требуемой высоте и ширине
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
+
+    //основной метод декодирование исходного изображения
+    private fun decodeSampledBitmapFromFile(curUri: Uri, reqWidth: Int, reqHeight: Int, context: Context): Bitmap? {
+        //сначала декодируем с помощью inJustDecodeBounds=true для проверки размеров
+        var bitmap = BitmapFactory.Options().run {
+            val stream = context.contentResolver.openInputStream(curUri)
+            inJustDecodeBounds = true
+            BitmapFactory.decodeStream(stream, null, this)
+
+            //посчитаем inSampleSize
+            inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight);
+
+            //декодирование растрового изображения с помощью набора inSampleSize
+            inJustDecodeBounds = false;
+            val newBitmap = context.contentResolver.openInputStream(curUri)
+            BitmapFactory.decodeStream(newBitmap, null, this)
+        }
+        return bitmap
     }
 
     private fun setPixelsWithLookupTable(orig: Bitmap, new: Bitmap, table: IntArray) {
