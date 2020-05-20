@@ -150,11 +150,12 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     private fun setPixelsWithLookupTable(orig: Bitmap, new: Bitmap, table: IntArray) {
-        for (x in 0 until new.width) {
-            for (y in 0 until new.height) {
-                new.setPixel(x, y, table[orig.getPixel(x, y) and 0xffffff] or 0xff000000.toInt())
-            }
+        val pixels = IntArray(orig.width * orig.height)
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+        for (i in pixels.indices) {
+            pixels[i] = table[pixels[i] and 0xffffff] or 0xff000000.toInt()
         }
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
     }
 
     //цветокоррекция и цветовые фильтры
@@ -244,5 +245,4 @@ class EditPhotoActivity : AppCompatActivity() {
         setPixelsWithLookupTable(orig, new, lookupTable)
         return new
     }
-
 }
