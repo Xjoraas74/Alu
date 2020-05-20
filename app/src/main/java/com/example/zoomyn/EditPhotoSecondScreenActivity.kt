@@ -8,5 +8,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo_second_screen)
+
+
     }
 }

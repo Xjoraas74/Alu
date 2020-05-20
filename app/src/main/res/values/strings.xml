@@ -26,4 +26,7 @@
     <string name="nameOfNinthFilter">Magenta</string>
     <string name="nameOfTenthFilter">Cyan</string>
     <string name="nameOfNormalFilter">Normal</string>
+    <string name="masking">Маскирование</string>
+    <string name="bilinearTrilinearFiltering">Фильтрация</string>
+    <string name="interpolation">Интерполяция</string>
 </resources>
