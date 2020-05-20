@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
+
     }
 
     private fun pickImageFromGallery() {
