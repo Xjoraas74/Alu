@@ -1,7 +1,6 @@
 package com.example.zoomyn
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
@@ -9,8 +8,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
@@ -105,7 +102,7 @@ class EditPhotoActivity : AppCompatActivity() {
         //функционирование кнопок верхнего меню
         buttonBack.setOnClickListener {
             val backAlertDialog = AlertDialog.Builder(this)
-            backAlertDialog.setIcon(R.drawable.ic_backspace)
+            backAlertDialog.setIcon(R.drawable.ic_keyboard_backspace)
             backAlertDialog.setTitle("Выход")
             backAlertDialog.setMessage("Если вернуться назад, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
