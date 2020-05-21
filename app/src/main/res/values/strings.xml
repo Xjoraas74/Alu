@@ -2,7 +2,6 @@
     <string name="app_name">Zoomyn</string>
     <string name="camera">камера</string>
     <string name="library">галерея</string>
-    <string name="icon_heart">&#xf083;</string>
     <string name="game">сыграй!</string>
     <string name="filter">Фильтр</string>
     <string name="edit">Редактировать</string>
@@ -29,4 +28,6 @@
     <string name="masking">Маскирование</string>
     <string name="bilinearTrilinearFiltering">Фильтрация</string>
     <string name="interpolation">Интерполяция</string>
+    <string name="textRotationMode">Выберите режим поворота</string>
+    <string name="nameFirstModeTurn">90°</string>
 </resources>
