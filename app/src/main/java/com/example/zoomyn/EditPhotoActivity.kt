@@ -1,6 +1,7 @@
 package com.example.zoomyn
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
@@ -12,9 +13,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
+import java.io.*
+import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
-
 
 class EditPhotoActivity : AppCompatActivity() {
 
@@ -62,7 +64,7 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonFilterFirst.setOnClickListener {
-            imageToEdit.setImageBitmap(bmpEditImage)
+            imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
         }
 
         buttonFilterSecond.setOnClickListener {
@@ -101,12 +103,12 @@ class EditPhotoActivity : AppCompatActivity() {
             imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, cyanColor))
         }
 
-        //функционирование кнопок верхнего меню
+        //функционирование кнопки "Back"
         buttonBack.setOnClickListener {
             val backAlertDialog = AlertDialog.Builder(this)
             backAlertDialog.setIcon(R.drawable.ic_keyboard_backspace)
             backAlertDialog.setTitle("Выход")
-            backAlertDialog.setMessage("Если вернуться назад, изменения не будут сохранены")
+            backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
             backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id ->
@@ -118,11 +120,31 @@ class EditPhotoActivity : AppCompatActivity() {
 
         //функционирование кнопки "Редактировать" - нижнее меню
         buttonEdit.setOnClickListener {
+            //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            val intentEdit = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            intentEdit.putExtra("BitmapImage", )
-            startActivity(intentEdit)
+            val uriCurrentBitmap = bitmapToFile(bitmap)
+            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            i.putExtra("imagePath", uriCurrentBitmap.toString())
+            startActivity(i)
         }
+    }
+
+    //функция для получения Uri из Bitmap
+    private fun bitmapToFile(bitmap:Bitmap): Uri {
+        val wrapper = ContextWrapper(applicationContext)
+
+        var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        return Uri.parse(file.absolutePath)
     }
 
     //сжатие фотографии
