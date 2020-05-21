@@ -13,6 +13,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.*
 import java.util.*
 import kotlin.math.min
@@ -46,11 +50,13 @@ class EditPhotoActivity : AppCompatActivity() {
         var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
         buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
+        CoroutineScope(Dispatchers.Default).launch {
+            buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
+        }
         buttonNormalFilter.setImageBitmap(buttonChooseFilters)
         buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
-        buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
-        buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
         buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
+        buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
         buttonFilterFifth.setImageBitmap(coloredFilter(buttonChooseFilters, redColor))
         buttonFilterSixth.setImageBitmap(coloredFilter(buttonChooseFilters, blueColor))
         buttonFilterSeventh.setImageBitmap(coloredFilter(buttonChooseFilters, greenColor))
@@ -186,55 +192,32 @@ class EditPhotoActivity : AppCompatActivity() {
         return bitmap
     }
 
-    private fun setPixelsWithLookupTable(orig: Bitmap, new: Bitmap, table: IntArray) {
-        val pixels = IntArray(orig.width * orig.height)
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-        for (i in pixels.indices) {
-            pixels[i] = table[pixels[i] and 0xffffff] or 0xff000000.toInt()
-        }
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-    }
-
     //цветокоррекция и цветовые фильтры
-    //чёрно-белый фильтр
-    private fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        var gray: Int
-        val lookupTable = IntArray(0x1000000)
-
-        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
-        for (i in 0 until 0x1000000) {
-            gray=(Color.red(i) * 0.3 + Color.green(i) * 0.59 + Color.blue(i) * 0.11).roundToInt()
-            lookupTable[i] = if (gray <= 127) {
-                Color.BLACK
-            } else {
-                Color.WHITE
-            }
-        }
-        setPixelsWithLookupTable(orig, new, lookupTable)
-        return new
-    }
-
     //фильтр "негатив"
     private fun negativeFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val lookupTable = IntArray(0x1000000)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
         /*
         R = 255 – R
         G = 255 – G
         B = 255 – B
         */
-        for (i in 0 until 0x1000000) {
-            lookupTable[i] = Color.rgb(255 - Color.red(i), 255 - Color.green(i), 255 - Color.blue(i))
+        for (i in pixels.indices) {
+            pixels[i] = Color.rgb(255 - Color.red(pixels[i]), 255 - Color.green(pixels[i]), 255 - Color.blue(pixels[i]))
         }
-        setPixelsWithLookupTable(orig, new, lookupTable)
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
     //фильтр "сепия"
     private fun sepiaFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val lookupTable = IntArray(0x1000000)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
         /*
         outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
         outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
@@ -242,41 +225,70 @@ class EditPhotoActivity : AppCompatActivity() {
 
         if greater than 255, round to 255
         */
-        for (i in 0 until 0x1000000) {
-            lookupTable[i] = Color.rgb(
-                min(255, (0.393 * Color.red(i) + 0.769 * Color.green(i) + 0.189 * Color.blue(i)).roundToInt()),
-                min(255, (0.349 * Color.red(i) + 0.686 * Color.green(i) + 0.168 * Color.blue(i)).roundToInt()),
-                min(255, (0.272 * Color.red(i) + 0.534 * Color.green(i) + 0.131 * Color.blue(i)).roundToInt())
+        for (i in pixels.indices) {
+            pixels[i] = Color.rgb(
+                min(255, (0.393 * Color.red(pixels[i]) + 0.769 * Color.green(pixels[i]) + 0.189 * Color.blue(pixels[i])).roundToInt()),
+                min(255, (0.349 * Color.red(pixels[i]) + 0.686 * Color.green(pixels[i]) + 0.168 * Color.blue(pixels[i])).roundToInt()),
+                min(255, (0.272 * Color.red(pixels[i]) + 0.534 * Color.green(pixels[i]) + 0.131 * Color.blue(pixels[i])).roundToInt())
             )
         }
-        setPixelsWithLookupTable(orig, new, lookupTable)
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
     //чёрно-белый с оттенками серого
     private fun grayScaleFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        var gray: Int
-        val lookupTable = IntArray(0x1000000)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
 
         // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
-        for (i in 0 until 0x1000000) {
-            gray=(Color.red(i) * 0.3 + Color.green(i) * 0.59 + Color.blue(i) * 0.11).roundToInt()
-            lookupTable[i] = Color.rgb(gray, gray, gray)
+        var gray: Int
+        for (i in pixels.indices) {
+            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
+            pixels[i] = Color.rgb(gray, gray, gray)
         }
-        setPixelsWithLookupTable(orig, new, lookupTable)
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //чёрно-белый фильтр
+    private fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
+        var gray: Int
+        for (i in pixels.indices) {
+            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
+            pixels[i] = if (gray <= 127) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+        }
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
     //цветной фильтр
     private fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
-        val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val lookupTable = IntArray(0x1000000)
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
 
-        for (i in 0 until 0x1000000) {
-            lookupTable[i] = col and i
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        for (i in pixels.indices) {
+           pixels[i] = col and pixels[i]
         }
-        setPixelsWithLookupTable(orig, new, lookupTable)
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 }
