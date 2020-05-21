@@ -2,18 +2,14 @@ package com.example.zoomyn
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_turn.*
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import kotlin.math.*
 
 
@@ -30,7 +26,7 @@ class FunTurnActivity : AppCompatActivity() {
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
 
-        var currentBitmap = getBitmapFromURL(fileUri.toString())
+        val currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
         //функционирование seekBar'а
         seekBarTurn.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -61,20 +57,6 @@ class FunTurnActivity : AppCompatActivity() {
 
         }
 
-    }
-
-    fun getBitmapFromURL(src: String?): Bitmap? {
-        return try {
-            val url = URL(src)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.setDoInput(true)
-            connection.connect()
-            val input: InputStream = connection.getInputStream()
-            BitmapFactory.decodeStream(input)
-        } catch (e: IOException) {
-            // Log exception
-            null
-        }
     }
 
     private fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
