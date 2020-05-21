@@ -10,17 +10,18 @@
     android:layout_width="match_parent">
 
     <ImageView
-        android:id="@+id/imageToEdit"
+        android:id="@+id/imageToEditSecondScreen"
         android:layout_width="0dp"
         android:layout_height="470dp"
+        android:layout_marginBottom="6dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_edit_image"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.226" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageButton
         android:id="@+id/buttonBack"
@@ -79,6 +80,7 @@
         app:layout_constraintVertical_bias="0.023" />
 
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:scrollbars="none"
@@ -99,18 +101,18 @@
                 android:id="@+id/linearLayoutFirstFun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginEnd="15dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textFirstFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/turn"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.104"
@@ -137,18 +139,18 @@
                 android:id="@+id/linearLayoutSecondFun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginEnd="15dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textSecondFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/scale"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.36"
@@ -175,18 +177,18 @@
                 android:id="@+id/linearLayoutThirdFun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginEnd="15dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textThirdFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/segmentation"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.648"
@@ -213,18 +215,18 @@
                 android:id="@+id/linearLayoutFourthFun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginEnd="15dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textFourthFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/retouch"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.883"
@@ -251,18 +253,18 @@
                 android:id="@+id/linearLayoutFifthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textFifthFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/masking"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.883"
@@ -274,9 +276,9 @@
                     android:id="@+id/buttonMasking"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
                     android:src="@drawable/ic_masking"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.918"
@@ -290,18 +292,18 @@
                 android:id="@+id/linearLayoutSixthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textSixthFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/bilinearTrilinearFiltering"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.883"
@@ -328,18 +330,18 @@
                 android:id="@+id/linearLayoutSeventhFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textSeventhFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/bilinearTrilinearFiltering"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.883"
@@ -366,18 +368,18 @@
                 android:id="@+id/linearLayoutEighthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textEighthFun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/interpolation"
                     android:textColor="@color/colorGray"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.883"
@@ -389,9 +391,9 @@
                     android:id="@+id/buttonInterpolation"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
                     android:src="@drawable/ic_interpolation"
-                    android:layout_gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.918"

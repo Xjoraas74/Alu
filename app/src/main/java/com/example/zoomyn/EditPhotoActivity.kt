@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlin.math.min
 import kotlin.math.roundToInt
+
 
 class EditPhotoActivity : AppCompatActivity() {
 
@@ -60,7 +62,7 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonFilterFirst.setOnClickListener {
-            imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
+            imageToEdit.setImageBitmap(bmpEditImage)
         }
 
         buttonFilterSecond.setOnClickListener {
@@ -116,8 +118,10 @@ class EditPhotoActivity : AppCompatActivity() {
 
         //функционирование кнопки "Редактировать" - нижнее меню
         buttonEdit.setOnClickListener {
-            val intent = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            startActivity(intent)
+            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            val intentEdit = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            intentEdit.putExtra("BitmapImage", )
+            startActivity(intentEdit)
         }
     }
 
