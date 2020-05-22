@@ -53,18 +53,25 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
-            val i = Intent(this, EditPhotoActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
+            val intentFilter = Intent(this, EditPhotoActivity::class.java)
+            intentFilter.putExtra("imagePath", uriCurrentBitmap.toString())
+            startActivity(intentFilter)
         }
 
         //функционирование кнопок выбора функций
         //поворот
         buttonTurn.setOnClickListener {
-            val i = Intent(this, FunTurnActivity::class.java)
-            i.putExtra("imagePath", fileUri.toString())
-            startActivity(i)
+            val intentTurn = Intent(this, FunTurnActivity::class.java)
+            intentTurn.putExtra("imagePath", fileUri.toString())
+            startActivity(intentTurn)
         }
+        //маскирование
+        buttonMasking.setOnClickListener {
+            val intentMasking = Intent(this, FunMaskingActivity::class.java)
+            intentMasking.putExtra("imagePath", fileUri.toString())
+            startActivity(intentMasking)
+        }
+        
     }
 
     //функция для получения Uri из Bitmap

@@ -32,4 +32,6 @@
     <string name="nameFirstModeTurn">90°</string>
     <string name="nameOfSecondMode">Другой угол</string>
     <string name="clickTheButtonTurn">Нажмите, чтобы повернуть изображение</string>
+    <string name="headerMasking">Нерезкое маскирование</string>
+    <string name="textChooseParameters">Укажите три параметра для применения функции</string>
 </resources>

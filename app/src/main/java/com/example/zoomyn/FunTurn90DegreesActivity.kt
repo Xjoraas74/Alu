@@ -16,7 +16,6 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-
 class FunTurn90DegreesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
