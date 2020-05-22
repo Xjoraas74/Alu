@@ -1,5 +1,8 @@
 package com.example.zoomyn
 
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Bitmap.createBitmap
 import android.graphics.Color
@@ -11,7 +14,11 @@ import android.widget.SeekBar
 import kotlin.math.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_masking.*
-import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.*
 
 class FunMaskingActivity : AppCompatActivity() {
 
@@ -29,11 +36,6 @@ class FunMaskingActivity : AppCompatActivity() {
 
         //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-
-        //передаваемые параметры для функции маскирования
-        var radius: Int = 0
-        var threshold: Int = 0
-        var amount: Int = 0
 
         //функционирование seekBar'а для радиуса
         seekBarMaskingRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -86,6 +88,39 @@ class FunMaskingActivity : AppCompatActivity() {
             }
         })
 
+        //функционирование кнопок нижнего меню
+        buttonCancel.setOnClickListener {
+            val uriCurrentBitmap = bitmapToFile(currentBitmap)
+            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            i.putExtra("imagePath", uriCurrentBitmap.toString())
+            startActivity(i)
+        }
+
+        buttonDone.setOnClickListener {
+            currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            val uriCurrentBitmap = bitmapToFile(currentBitmap)
+            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            i.putExtra("imagePath", uriCurrentBitmap.toString())
+            startActivity(i)
+        }
+    }
+
+    //функция для получения Uri из Bitmap
+    private fun bitmapToFile(bitmap:Bitmap): Uri {
+        val wrapper = ContextWrapper(applicationContext)
+
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        return Uri.parse(file.absolutePath)
     }
 
     private fun unsharpMasking(orig: Bitmap, am: Int, rad: Int, thres: Int): Bitmap {

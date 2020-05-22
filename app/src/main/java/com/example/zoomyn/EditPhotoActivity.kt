@@ -12,6 +12,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo.*
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
+import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,77 +39,81 @@ class EditPhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo)
 
-        //получение фотографии
-        val intent = intent
-        val imagePath = intent.getStringExtra("imagePath")
-        val fileUri = Uri.parse(imagePath)
-
-        //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
-        var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
-        imageToEdit.setImageBitmap(bmpEditImage)
-
-        //создание изображения на кнопках выбора фильтра
-        var buttonChooseFilters = Bitmap.createBitmap(bmpEditImage!!.width, bmpEditImage.height, Bitmap.Config.ARGB_8888)
-        buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
-
-        CoroutineScope(Dispatchers.Default).launch {
-            buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
-        }
-        buttonNormalFilter.setImageBitmap(buttonChooseFilters)
-        buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
-        buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
-        buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
-        buttonFilterFifth.setImageBitmap(coloredFilter(buttonChooseFilters, redColor))
-        buttonFilterSixth.setImageBitmap(coloredFilter(buttonChooseFilters, blueColor))
-        buttonFilterSeventh.setImageBitmap(coloredFilter(buttonChooseFilters, greenColor))
-        buttonFilterEighth.setImageBitmap(coloredFilter(buttonChooseFilters, yellowColor))
-        buttonFilterNinth.setImageBitmap(coloredFilter(buttonChooseFilters, magentaColor))
-        buttonFilterTenth.setImageBitmap(coloredFilter(buttonChooseFilters, cyanColor))
-
-        //функционирование кнопок выбора фильтра
-        buttonNormalFilter.setOnClickListener {
+            //получение фотографии
+            val intent = intent
+            val imagePath = intent.getStringExtra("imagePath")
+            val fileUri = Uri.parse(imagePath)
+        
+            //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
+            var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
             imageToEdit.setImageBitmap(bmpEditImage)
-        }
 
-        buttonFilterFirst.setOnClickListener {
-            imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
-        }
+            //создание изображения на кнопках выбора фильтра
+            var buttonChooseFilters = Bitmap.createBitmap(
+                bmpEditImage!!.width,
+                bmpEditImage.height,
+                Bitmap.Config.ARGB_8888
+            )
+            buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
-        buttonFilterSecond.setOnClickListener {
-            imageToEdit.setImageBitmap(negativeFilter(bmpEditImage))
-        }
+            CoroutineScope(Dispatchers.Default).launch {
+                buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
+            }
+            buttonNormalFilter.setImageBitmap(buttonChooseFilters)
+            buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
+            buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
+            buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
+            buttonFilterFifth.setImageBitmap(coloredFilter(buttonChooseFilters, redColor))
+            buttonFilterSixth.setImageBitmap(coloredFilter(buttonChooseFilters, blueColor))
+            buttonFilterSeventh.setImageBitmap(coloredFilter(buttonChooseFilters, greenColor))
+            buttonFilterEighth.setImageBitmap(coloredFilter(buttonChooseFilters, yellowColor))
+            buttonFilterNinth.setImageBitmap(coloredFilter(buttonChooseFilters, magentaColor))
+            buttonFilterTenth.setImageBitmap(coloredFilter(buttonChooseFilters, cyanColor))
 
-        buttonFilterThird.setOnClickListener {
-            imageToEdit.setImageBitmap(sepiaFilter(bmpEditImage))
-        }
+            //функционирование кнопок выбора фильтра
+            buttonNormalFilter.setOnClickListener {
+                imageToEdit.setImageBitmap(bmpEditImage)
+            }
 
-        buttonFilterFourth.setOnClickListener {
-            imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
-        }
+            buttonFilterFirst.setOnClickListener {
+                imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
+            }
 
-        buttonFilterFifth.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, redColor))
-        }
+            buttonFilterSecond.setOnClickListener {
+                imageToEdit.setImageBitmap(negativeFilter(bmpEditImage))
+            }
 
-        buttonFilterSixth.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, blueColor))
-        }
+            buttonFilterThird.setOnClickListener {
+                imageToEdit.setImageBitmap(sepiaFilter(bmpEditImage))
+            }
 
-        buttonFilterSeventh.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, greenColor))
-        }
+            buttonFilterFourth.setOnClickListener {
+                imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
+            }
 
-        buttonFilterEighth.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, yellowColor))
-        }
+            buttonFilterFifth.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, redColor))
+            }
 
-        buttonFilterNinth.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, magentaColor))
-        }
+            buttonFilterSixth.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, blueColor))
+            }
 
-        buttonFilterTenth.setOnClickListener {
-            imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, cyanColor))
-        }
+            buttonFilterSeventh.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, greenColor))
+            }
+
+            buttonFilterEighth.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, yellowColor))
+            }
+
+            buttonFilterNinth.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, magentaColor))
+            }
+
+            buttonFilterTenth.setOnClickListener {
+                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, cyanColor))
+            }
 
         //функционирование кнопки "Back"
         buttonBack.setOnClickListener {

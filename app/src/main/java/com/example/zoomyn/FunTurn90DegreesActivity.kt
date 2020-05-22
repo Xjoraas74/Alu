@@ -35,6 +35,7 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
 
         //функционирование кнопки поворота изображения
         buttonClickForTurn.setOnClickListener {
+            currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             imageToEdit.setImageBitmap(rotate90DegreesClockwise(currentBitmap))
         }
 
