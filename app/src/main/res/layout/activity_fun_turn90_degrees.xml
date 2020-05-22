@@ -30,7 +30,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="68dp"
         android:layout_marginBottom="20dp"
-        android:scaleType="centerCrop"
         android:src="@drawable/ic_edit_image"
         app:layout_constraintBottom_toTopOf="@+id/textClickTurn"
         app:layout_constraintEnd_toEndOf="parent"

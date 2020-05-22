@@ -34,4 +34,8 @@
     <string name="clickTheButtonTurn">Нажмите, чтобы повернуть изображение</string>
     <string name="headerMasking">Нерезкое маскирование</string>
     <string name="textChooseParameters">Укажите три параметра для применения функции</string>
+    <string name="radius">Радиус:</string>
+    <string name="threshold">Порог:</string>
+    <string name="amount">Эффект:</string>
+    <string name="parametersForEdit">Выберите параметры редактирования</string>
 </resources>

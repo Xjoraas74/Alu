@@ -30,11 +30,16 @@ class FunMaskingActivity : AppCompatActivity() {
         //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
-        //функционирование seekBar'а
+        //передаваемые параметры для функции маскирования
+        var radius: Int = 0
+        var threshold: Int = 0
+        var amount: Int = 0
+
+        //функционирование seekBar'а для радиуса
         seekBarMaskingRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarMaskingRadius.text = "$i°"
+                progressSeekBarMaskingRadius.text = "$i"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -42,7 +47,41 @@ class FunMaskingActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    val angle = seekBarMaskingRadius.progress
+                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
+                }
+            }
+        })
+
+        //функционирование seekBar'а для порога
+        seekBarMaskingThreshold.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                progressSeekBarMaskingThreshold.text = "$i"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                if (currentBitmap != null) {
+                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
+                }
+            }
+        })
+
+        //функционирование seekBar'а для эффекта
+        seekBarMaskingAmount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                progressSeekBarMaskingAmount.text = "$i"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                if (currentBitmap != null) {
+                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
                 }
             }
         })
