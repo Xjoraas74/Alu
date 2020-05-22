@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -16,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.*
 import java.util.*
 import kotlin.math.min
@@ -128,6 +126,7 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonEdit.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
@@ -176,7 +175,7 @@ class EditPhotoActivity : AppCompatActivity() {
     //основной метод декодирование исходного изображения
     private fun decodeSampledBitmapFromFile(curUri: Uri, reqWidth: Int, reqHeight: Int, context: Context): Bitmap? {
         //сначала декодируем с помощью inJustDecodeBounds=true для проверки размеров
-        var bitmap = BitmapFactory.Options().run {
+        val bitmap = BitmapFactory.Options().run {
             val stream = context.contentResolver.openInputStream(curUri)
             inJustDecodeBounds = true
             BitmapFactory.decodeStream(stream, null, this)

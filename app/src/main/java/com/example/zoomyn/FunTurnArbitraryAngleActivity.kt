@@ -10,7 +10,6 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.SeekBar
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.*
 import java.io.File
@@ -34,6 +33,7 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
 
+        //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
         //функционирование seekBar'а
@@ -56,9 +56,11 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
 
         //функционирование кнопко нижнего меню
         buttonCancel.setOnClickListener {
-            val intentCancel = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            startActivity(intentCancel)
-            //overridePendingTransition(0,0);
+            //передача изображения в другое активити
+            val uriCurrentBitmap = bitmapToFile(currentBitmap)
+            val i = Intent(this, FunTurnActivity::class.java)
+            i.putExtra("imagePath", uriCurrentBitmap.toString())
+            startActivity(i)
         }
 
         buttonDone.setOnClickListener {

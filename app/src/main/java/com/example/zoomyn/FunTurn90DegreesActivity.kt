@@ -9,17 +9,19 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
-import kotlinx.android.synthetic.main.activity_fun_turn.*
+import kotlinx.android.synthetic.main.activity_fun_turn90_degrees.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-class FunTurnActivity : AppCompatActivity() {
+
+class FunTurn90DegreesActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_fun_turn)
+        setContentView(R.layout.activity_fun_turn90_degrees)
 
         //извлечение изображения из предыдущей активити c примененными фильтрами
         val intent = intent
@@ -32,32 +34,16 @@ class FunTurnActivity : AppCompatActivity() {
         //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
-        //функционирование кнопок режима выбора поворота
-        button90degrees.setOnClickListener {
-            //получение изображения с применимыми фильтрами
-            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            //передача изображения в другое активити
-            val uriCurrentBitmap = bitmapToFile(bitmap)
-            val i = Intent(this, FunTurn90DegreesActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
-        }
-
-        buttonArbitraryAngle.setOnClickListener {
-            //получение изображения с применимыми фильтрами
-            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            //передача изображения в другое активити
-            val uriCurrentBitmap = bitmapToFile(bitmap)
-            val i = Intent(this, FunTurnArbitraryAngle::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
+        //функционирование кнопки поворота изображения
+        buttonClickForTurn.setOnClickListener {
+            imageToEdit.setImageBitmap(rotate90DegreesClockwise(currentBitmap))
         }
 
         //функционирование кнопок нижнего меню
         buttonCancel.setOnClickListener {
-            currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
-            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            val i = Intent(this, FunTurnActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
             startActivity(i)
         }
@@ -69,7 +55,6 @@ class FunTurnActivity : AppCompatActivity() {
             i.putExtra("imagePath", uriCurrentBitmap.toString())
             startActivity(i)
         }
-
     }
 
     //функция для получения Uri из Bitmap
@@ -90,4 +75,22 @@ class FunTurnActivity : AppCompatActivity() {
         return Uri.parse(file.absolutePath)
     }
 
+    //функция поворота изображения на 90 градусов
+    private fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
+
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+        val pixelsCount = orig.width * orig.height
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
+        for (i in 0 until new.height) {
+            for (j in 0 until new.width) {
+                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
+            }
+        }
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
+
+        return new
+    }
 }

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    tools:context=".FunTurnActivity"
+    tools:context=".FunTurn90DegreesActivity"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -32,79 +32,39 @@
         android:layout_marginBottom="20dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_edit_image"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutScrollTurn"
+        app:layout_constraintBottom_toTopOf="@+id/textClickTurn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutScrollTurn"
+    <TextView
+        android:id="@+id/textClickTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginEnd="80dp"
-        android:layout_marginRight="80dp"
-        android:orientation="horizontal"
+        android:text="@string/clickTheButtonTurn"
+        android:textColor="@color/colorLightGray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.77" />
+
+    <ImageButton
+        android:id="@+id/buttonClickForTurn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_border_around"
+        android:src="@drawable/ic_touch_app"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.88">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
-            android:layout_marginRight="40dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textFirstMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:text="@string/nameFirstModeTurn"
-                android:textColor="@color/colorGray"
-                android:textSize="15sp" />
-
-            <ImageButton
-                android:id="@+id/button90degrees"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/btn_border_around"
-                android:src="@drawable/ic_rotate_90_degrees" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textSecondMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:text="@string/nameOfSecondMode"
-                android:textColor="@color/colorGray"
-                android:textSize="15sp" />
-
-            <ImageButton
-                android:id="@+id/buttonArbitraryAngle"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/btn_border_around"
-                android:src="@drawable/ic_rotate"
-                android:layout_gravity="center"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+        app:layout_constraintVertical_bias="0.89" />
 
     <Button
         android:id="@+id/buttonCancel"

@@ -118,26 +118,14 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/turn"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.104"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonTurn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_turn"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.075"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_turn" />
 
             </LinearLayout>
 
@@ -156,26 +144,14 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/scale"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.36"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonScale"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_scale"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.359"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_scale" />
 
             </LinearLayout>
 
@@ -194,26 +170,14 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/segmentation"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.648"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonSegmentation"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_segmentation"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.637"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_segmentation" />
 
             </LinearLayout>
 
@@ -232,26 +196,14 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/retouch"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.883"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonRetouch"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_retouch"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.918"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_retouch" />
 
             </LinearLayout>
 
@@ -270,13 +222,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/masking"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.883"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonMasking"
@@ -284,13 +230,7 @@
                     android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_masking"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.918"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_masking" />
 
             </LinearLayout>
 
@@ -309,26 +249,14 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/bilinearTrilinearFiltering"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.883"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonBilinearFiltering"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_bilinear_filtering"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.918"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_bilinear_filtering" />
 
             </LinearLayout>
 
@@ -347,13 +275,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/bilinearTrilinearFiltering"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.883"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonTrilinearFiltering"
@@ -361,12 +283,7 @@
                     android:layout_height="80dp"
                     android:background="@drawable/btn_border_around"
                     android:src="@drawable/ic_trilinear_filtering"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.918"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
             </LinearLayout>
 
@@ -385,13 +302,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text="@string/interpolation"
-                    android:textColor="@color/colorGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.883"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.751" />
+                    android:textColor="@color/colorGray" />
 
                 <ImageButton
                     android:id="@+id/buttonInterpolation"
@@ -399,13 +310,7 @@
                     android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_interpolation"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.918"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.855" />
+                    android:src="@drawable/ic_interpolation" />
 
             </LinearLayout>
 
