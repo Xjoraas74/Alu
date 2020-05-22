@@ -71,7 +71,13 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             intentMasking.putExtra("imagePath", fileUri.toString())
             startActivity(intentMasking)
         }
-        
+        //масштабирование
+        buttonScale.setOnClickListener {
+            val intentScale = Intent(this, FunScaleActivity::class.java)
+            intentScale.putExtra("imagePath", fileUri.toString())
+            startActivity(intentScale)
+        }
+
     }
 
     //функция для получения Uri из Bitmap

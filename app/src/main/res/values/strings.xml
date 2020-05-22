@@ -38,4 +38,5 @@
     <string name="threshold">Порог:</string>
     <string name="amount">Эффект:</string>
     <string name="parametersForEdit">Выберите параметры редактирования</string>
+    <string name="headerScale">Масштабирование</string>
 </resources>
