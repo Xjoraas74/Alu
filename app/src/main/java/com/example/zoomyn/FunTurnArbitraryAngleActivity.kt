@@ -54,7 +54,7 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
             }
         })
 
-        //функционирование кнопко нижнего меню
+        //функционирование кнопок нижнего меню
         buttonCancel.setOnClickListener {
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
