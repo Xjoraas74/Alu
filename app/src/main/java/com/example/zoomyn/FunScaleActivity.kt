@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.SeekBar
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_scale.*
@@ -24,6 +25,7 @@ import java.io.OutputStream
 import java.lang.Math.ceil
 import java.lang.Math.floor
 import java.util.*
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 class FunScaleActivity : AppCompatActivity() {
@@ -87,20 +89,21 @@ class FunScaleActivity : AppCompatActivity() {
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
     }
 
-    //функция масштабирования полученного изображения
-    private fun scale(orig: Bitmap, scaleFactor: Double): Bitmap {
-        val new = createBitmap((orig.width * scaleFactor).toInt(), (orig.height * scaleFactor).toInt(), Bitmap.Config.ARGB_8888)
+    private fun getPixelsBilinearlyScaled(orig: IntArray, scaleFactor: Double, origWidth: Int, origHeight: Int): IntArray {
+        val nw = (origWidth * scaleFactor).roundToInt()
+        val nh = (origHeight * scaleFactor).roundToInt()
+        val pixelsNew = IntArray(nw * nh)
 
         var iFloorX: Int
         var iCeilingX: Int
@@ -124,44 +127,77 @@ class FunScaleActivity : AppCompatActivity() {
         var iGreen: Int
         var iBlue: Int
 
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
+        for (i in 0 until nh) {
+            for (j in 0 until nw) {
                 fTrueX = j / scaleFactor
                 fTrueY = i / scaleFactor
 
-                iFloorX = floor(fTrueX).toInt()
-                iFloorY = floor(fTrueY).toInt()
-                iCeilingX = ceil(fTrueX).toInt()
-                iCeilingY = ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) continue
+                iFloorX = kotlin.math.floor(fTrueX).toInt()
+                iFloorY = kotlin.math.floor(fTrueY).toInt()
+                iCeilingX = kotlin.math.ceil(fTrueX).toInt()
+                iCeilingY = kotlin.math.ceil(fTrueY).toInt()
+                if (iFloorX < 0 || iCeilingX >= origWidth || iFloorY < 0 || iCeilingY >= origHeight) continue
 
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY
 
-                clrTopLeft = orig.getPixel(iFloorX, iFloorY)
-                clrTopRight = orig.getPixel(iCeilingX, iFloorY)
-                clrBottomLeft = orig.getPixel(iFloorX, iCeilingY)
-                clrBottomRight = orig.getPixel(iCeilingX, iCeilingY)
+                // indices in pixelsOrig:
+                clrTopLeft = iFloorY * origWidth + iFloorX
+                clrTopRight = iFloorY * origWidth + iCeilingX
+                clrBottomLeft = iCeilingY * origWidth + iFloorX
+                clrBottomRight = iCeilingY * origWidth + iCeilingX
 
                 // linearly interpolate horizontally between top neighbours
-                fTopRed = (1 - fDeltaX) * Color.red(clrTopLeft) + fDeltaX * Color.red(clrTopRight)
-                fTopGreen = (1 - fDeltaX) * Color.green(clrTopLeft) + fDeltaX * Color.green(clrTopRight)
-                fTopBlue = (1 - fDeltaX) * Color.blue(clrTopLeft) + fDeltaX * Color.blue(clrTopRight)
+                fTopRed = (1 - fDeltaX) * Color.red(orig[clrTopLeft]) + fDeltaX * Color.red(orig[clrTopRight])
+                fTopGreen = (1 - fDeltaX) * Color.green(orig[clrTopLeft]) + fDeltaX * Color.green(orig[clrTopRight])
+                fTopBlue = (1 - fDeltaX) * Color.blue(orig[clrTopLeft]) + fDeltaX * Color.blue(orig[clrTopRight])
 
                 // linearly interpolate horizontally between bottom neighbours
-                fBottomRed = (1 - fDeltaX) * Color.red(clrBottomLeft) + fDeltaX * Color.red(clrBottomRight)
-                fBottomGreen = (1 - fDeltaX) * Color.green(clrBottomLeft) + fDeltaX * Color.green(clrBottomRight)
-                fBottomBlue = (1 - fDeltaX) * Color.blue(clrBottomLeft) + fDeltaX * Color.blue(clrBottomRight)
+                fBottomRed = (1 - fDeltaX) * Color.red(orig[clrBottomLeft]) + fDeltaX * Color.red(orig[clrBottomRight])
+                fBottomGreen = (1 - fDeltaX) * Color.green(orig[clrBottomLeft]) + fDeltaX * Color.green(orig[clrBottomRight])
+                fBottomBlue = (1 - fDeltaX) * Color.blue(orig[clrBottomLeft]) + fDeltaX * Color.blue(orig[clrBottomRight])
 
                 // linearly interpolate vertically between top and bottom interpolated results
                 iRed = ((1 - fDeltaY) * fTopRed + fDeltaY * fBottomRed).roundToInt()
                 iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
                 iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
 
-                new.setPixel(j, i, Color.rgb(iRed, iGreen, iBlue))
+                pixelsNew[i * nw + j] = Color.rgb(iRed, iGreen, iBlue)
             }
         }
 
+        return pixelsNew
+    }
+
+    //функция масштабирования полученного изображения
+    private fun scale(orig: Bitmap, scaleFactor: Double): Bitmap {
+        if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
+            val new = createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            Toast.makeText(this, "The value is too small; can't resize!", Toast.LENGTH_LONG).show()
+            return new
+        }
+
+        if (scaleFactor == 1.0) {
+            return orig
+        }
+
+        val new = createBitmap(
+            (orig.width * scaleFactor).roundToInt(),
+            (orig.height * scaleFactor).roundToInt(),
+            Bitmap.Config.ARGB_8888
+        )
+
+        val pixels = IntArray(orig.width * orig.height)
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+        new.setPixels(
+            getPixelsBilinearlyScaled(pixels, scaleFactor, orig.width, orig.height),
+            0,
+            new.width,
+            0,
+            0,
+            new.width,
+            new.height
+        )
         return new
     }
 

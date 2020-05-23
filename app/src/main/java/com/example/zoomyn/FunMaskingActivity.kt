@@ -124,6 +124,7 @@ class FunMaskingActivity : AppCompatActivity() {
     }
 
     private fun unsharpMasking(orig: Bitmap, am: Int, rad: Int, thres: Int): Bitmap {
+        // am 5 means amount is 5%
         val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixelsOrig = IntArray(orig.width * orig.height)
         val pixelsNew = IntArray(new.width * new.height)
@@ -161,6 +162,7 @@ class FunMaskingActivity : AppCompatActivity() {
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         for (i in 0 until new.height) {
             for (j in 0 until new.width) {
+                // don't make convolution for boundary pixels?
                 for (k in gaussianDistribution.indices) {
                     kAdjusted = min(new.width - 1, max(0, j + k))
                     convolvedHorizontallyRed += Color.red(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
