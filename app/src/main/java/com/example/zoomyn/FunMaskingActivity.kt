@@ -14,6 +14,7 @@ import android.widget.SeekBar
 import kotlin.math.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_masking.*
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -49,7 +50,7 @@ class FunMaskingActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
+                    imageToEdit.setImageBitmap(callUnsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
                 }
             }
         })
@@ -66,7 +67,7 @@ class FunMaskingActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
+                    imageToEdit.setImageBitmap(callUnsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
                 }
             }
         })
@@ -83,7 +84,7 @@ class FunMaskingActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    imageToEdit.setImageBitmap(unsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
+                    imageToEdit.setImageBitmap(callUnsharpMasking(currentBitmap, seekBarMaskingAmount.progress, seekBarMaskingRadius.progress, seekBarMaskingThreshold.progress))
                 }
             }
         })
@@ -112,39 +113,28 @@ class FunMaskingActivity : AppCompatActivity() {
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
     }
 
-    private fun unsharpMasking(orig: Bitmap, am: Int, rad: Int, thres: Int): Bitmap {
-        // am 5 means amount is 5%
-        val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixelsOrig = IntArray(orig.width * orig.height)
-        val pixelsNew = IntArray(new.width * new.height)
-
-        // creates Gaussian distribution from row of Pascal's triangle excluding two elements on both ends
-        val help = DoubleArray(rad * 2 + 5)
-        help[0] = 1.0
-        for (i in 1 until help.size) {
-            help[i] = help[i - 1] * (help.size - i) / i
-        }
-        val gaussianDistribution = DoubleArray(help.size - 4)
-        var sum: Double = 0.0
-        for (i in  gaussianDistribution.indices) {
-            gaussianDistribution[i] = help[i + 2]
-            sum += gaussianDistribution[i]
-        }
-        for (i in gaussianDistribution.indices) {
-            gaussianDistribution[i] = gaussianDistribution[i] / sum
-        }
-
+    private fun unsharpMasking(
+        pixelsOrig: IntArray,
+        pixelsNew: IntArray,
+        am: Int,
+        thres: Int,
+        gaussianDistribution: DoubleArray,
+        iMin: Int,
+        iMax:Int,
+        bitmapWidth: Int,
+        maxPossibleY: Int
+    ) {
         var convolvedHorizontallyRed = 0.0
         var convolvedHorizontallyGreen = 0.0
         var convolvedHorizontallyBlue = 0.0
@@ -159,25 +149,24 @@ class FunMaskingActivity : AppCompatActivity() {
         var blue: Int
         var kAdjusted: Int
 
-        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
+        for (i in iMin..iMax) {
+            for (j in 0 until bitmapWidth) {
                 // don't make convolution for boundary pixels?
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(new.width - 1, max(0, j + k))
-                    convolvedHorizontallyRed += Color.red(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
-                    convolvedHorizontallyGreen += Color.green(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
-                    convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * orig.width + kAdjusted]) * gaussianDistribution[k]
+                    kAdjusted = min(bitmapWidth - 1, max(0, j + k))
+                    convolvedHorizontallyRed += Color.red(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyGreen += Color.green(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                 }
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(new.height - 1, max(0, i + k))
-                    convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
-                    convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
-                    convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * orig.width + j]) * gaussianDistribution[k]
+                    kAdjusted = min(maxPossibleY, max(0, i + k))
+                    convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
+                    convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
+                    convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
                 }
-                red = Color.red(pixelsOrig[i * orig.width + j])
-                green = Color.green(pixelsOrig[i * orig.width + j])
-                blue = Color.blue(pixelsOrig[i * orig.width + j])
+                red = Color.red(pixelsOrig[i * bitmapWidth + j])
+                green = Color.green(pixelsOrig[i * bitmapWidth + j])
+                blue = Color.blue(pixelsOrig[i * bitmapWidth + j])
                 redDiff = red - ((convolvedHorizontallyRed + convolvedVerticallyRed) / 2).roundToInt()
                 greenDiff = green - ((convolvedHorizontallyGreen + convolvedVerticallyGreen) / 2).roundToInt()
                 blueDiff = blue - ((convolvedHorizontallyBlue + convolvedVerticallyBlue) / 2).roundToInt()
@@ -195,7 +184,7 @@ class FunMaskingActivity : AppCompatActivity() {
                 red = min(255, red)
                 green = min(255, green)
                 blue = min(255, blue)
-                pixelsNew[i * new.width + j] = Color.rgb(red, green, blue)
+                pixelsNew[i * bitmapWidth + j] = Color.rgb(red, green, blue)
 
                 convolvedHorizontallyRed = 0.0
                 convolvedHorizontallyGreen = 0.0
@@ -205,9 +194,54 @@ class FunMaskingActivity : AppCompatActivity() {
                 convolvedVerticallyBlue = 0.0
             }
         }
+    }
+
+    private fun callUnsharpMasking(orig: Bitmap, amount: Int, radius: Int, threshold: Int): Bitmap {
+        // amount value is taken in percents
+        val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+
+        // creates Gaussian distribution from row of Pascal's triangle excluding two elements on both ends
+        val help = DoubleArray(radius * 2 + 5)
+        help[0] = 1.0
+        for (i in 1 until help.size) {
+            help[i] = help[i - 1] * (help.size - i) / i
+        }
+        val gaussianDistribution = DoubleArray(help.size - 4)
+        var sum: Double = 0.0
+        for (i in  gaussianDistribution.indices) {
+            gaussianDistribution[i] = help[i + 2]
+            sum += gaussianDistribution[i]
+        }
+        for (i in gaussianDistribution.indices) {
+            gaussianDistribution[i] = gaussianDistribution[i] / sum
+        }
+
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        runBlocking {
+            coroutineScope {
+                val n = 100 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        unsharpMasking(
+                            pixelsOrig,
+                            pixelsNew,
+                            amount,
+                            threshold,
+                            gaussianDistribution,
+                            it * new.height / n,
+                            if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 },
+                            new.width,
+                            new.height - 1
+                        )
+                    }
+                }.awaitAll()
+            }
+        }
 
         new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
-
 }

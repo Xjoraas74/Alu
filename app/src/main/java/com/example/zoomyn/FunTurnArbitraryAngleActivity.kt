@@ -144,7 +144,10 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
                 iFloorY = floor(fTrueY).toInt()
                 iCeilingX = ceil(fTrueX).toInt()
                 iCeilingY = ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) continue
+                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) {
+                    pixelsNew[i * new.width + j] = Color.WHITE
+                    continue
+                }
 
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY
