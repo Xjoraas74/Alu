@@ -193,7 +193,7 @@ class FunMaskingActivity : AppCompatActivity() {
         }
     }
 
-    private fun callUnsharpMasking(orig: Bitmap, amount: Int, radius: Int, threshold: Int): Bitmap {
+    fun callUnsharpMasking(orig: Bitmap, amount: Int, radius: Int, threshold: Int): Bitmap {
         // amount value is taken in percents
         val new = createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixelsOrig = IntArray(orig.width * orig.height)

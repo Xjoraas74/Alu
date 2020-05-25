@@ -102,7 +102,7 @@ class FunScaleActivity : AppCompatActivity() {
         createMipmaps(mipmaps, currentBitmap)
     }
 
-    private fun createMipmaps(m: MutableList<Mipmap>, orig: Bitmap) {
+    fun createMipmaps(m: MutableList<Mipmap>, orig: Bitmap) {
         Mipmap().apply {
             this.create(orig.width, orig.height)
             orig.getPixels(this.self, 0, orig.width, 0, 0, orig.width, orig.height)
@@ -207,7 +207,7 @@ class FunScaleActivity : AppCompatActivity() {
     }
 
     //функция масштабирования полученного изображения
-    private fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<Mipmap>): Bitmap {
+    fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<Mipmap>): Bitmap {
         if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
             val new = createBitmap(1, 1, Bitmap.Config.ARGB_8888)
             new.setPixel(0, 0, mipmaps.last().self[0])

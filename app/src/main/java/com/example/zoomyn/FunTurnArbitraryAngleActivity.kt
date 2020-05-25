@@ -90,7 +90,7 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
         return Uri.parse(file.absolutePath)
     }
 
-    private fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
+    fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val a = aDeg * PI / 180
         val iCentreX = new.width / 2
