@@ -63,7 +63,11 @@ class FunScaleActivity : AppCompatActivity() {
         seekBarScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarScale.text = "Увеличить в $i ${ if (i != 1) {"раза"} else {"раз"} }"
+                textSeekBarScale.text = "Увеличить в $i" +
+                when (i) {
+                    2, 3, 4 -> "раза"
+                    else -> "раз"
+                }
                 //textSeekBarScale.text = "$i°"
             }
 
