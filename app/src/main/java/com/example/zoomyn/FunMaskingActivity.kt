@@ -178,18 +178,10 @@ class FunMaskingActivity : AppCompatActivity() {
                 if (hslDiff[2] > threshold) {
                     ColorUtils.RGBToHSL(red, green, blue, hslUsed)
                     hslUsed[2] += hslDiff[2] * .01.toFloat() * am
-                    /*red = Color.red(colorFromHsl)
-                    green = Color.green(colorFromHsl)
-                    blue = Color.blue(colorFromHsl)*/
                     pixelsNew[i * bitmapWidth + j] = ColorUtils.HSLToColor(hslUsed)
                 } else {
                     pixelsNew[i * bitmapWidth + j] = pixelsOrig[i * bitmapWidth + j]
                 }
-
-                /*red = min(255, red)
-                green = min(255, green)
-                blue = min(255, blue)
-                pixelsNew[i * bitmapWidth + j] = Color.rgb(red, green, blue)*/
 
                 convolvedHorizontallyRed = 0.0
                 convolvedHorizontallyGreen = 0.0
@@ -208,17 +200,10 @@ class FunMaskingActivity : AppCompatActivity() {
         val pixelsNew = IntArray(new.width * new.height)
 
         // creates Gaussian distribution from row of Pascal's triangle
-        // not excluding two elements on both ends
-
-        /*val help = DoubleArray(radius * 2 + 5)
-        help[0] = 1.0
-        for (i in 1 until help.size) {
-            help[i] = help[i - 1] * (help.size - i) / i
-        }*/
         val gaussianDistribution = DoubleArray(radius * 2 + 1)
         gaussianDistribution[0] = 1.0
-        var sum = 0.0
-        for (i in 1..gaussianDistribution.size) {
+        var sum = gaussianDistribution[0]
+        for (i in 1 until gaussianDistribution.size) {
             gaussianDistribution[i] = gaussianDistribution[i - 1] * (gaussianDistribution.size - i) / i
             sum += gaussianDistribution[i]
         }
@@ -227,7 +212,6 @@ class FunMaskingActivity : AppCompatActivity() {
         }
 
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-
         runBlocking {
             coroutineScope {
                 val n = 100 // amount of coroutines to launch

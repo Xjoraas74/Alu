@@ -30,6 +30,20 @@ import kotlin.math.roundToInt
 
 class FunScaleActivity : AppCompatActivity() {
 
+    class Mipmap {
+        lateinit var self: IntArray
+        var width = 0
+        var height = 0
+
+        fun create(width: Int, height: Int) {
+            this.height = height
+            this.width = width
+            this.self = IntArray(height * width)
+        }
+    }
+
+    private val mipmaps = mutableListOf<Mipmap>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fun_scale)
@@ -49,7 +63,8 @@ class FunScaleActivity : AppCompatActivity() {
         seekBarScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarScale.text = "$i°"
+                textSeekBarScale.text = "Увеличить в $i ${ if (i != 1) {"раза"} else {"раз"} }"
+                //textSeekBarScale.text = "$i°"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -58,7 +73,7 @@ class FunScaleActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
                     val value = seekBarScale.progress.toDouble()
-                    imageToEdit.setImageBitmap(scale(currentBitmap, value))
+                    imageToEdit.setImageBitmap(scale(currentBitmap, value, mipmaps))
                 }
             }
         })
@@ -80,6 +95,24 @@ class FunScaleActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        createMipmaps(mipmaps, currentBitmap)
+    }
+
+    private fun createMipmaps(m: MutableList<Mipmap>, orig: Bitmap) {
+        Mipmap().apply {
+            this.create(orig.width, orig.height)
+            orig.getPixels(this.self, 0, orig.width, 0, 0, orig.width, orig.height)
+            m.add(this)
+        }
+
+        // used    do { } while ()    before
+        while (m.last().width != 1 || m.last().height != 1) {
+            Mipmap().apply {
+                this.create((m.last().width * .5).roundToInt(), (m.last().height * .5).roundToInt())
+                this.self = getPixelsBilinearlyScaled(m.last().self, .5, m.last().width, m.last().height)
+                m.add(this)
+            }
+        }
     }
 
     //функция для получения Uri из Bitmap
@@ -170,9 +203,10 @@ class FunScaleActivity : AppCompatActivity() {
     }
 
     //функция масштабирования полученного изображения
-    private fun scale(orig: Bitmap, scaleFactor: Double): Bitmap {
+    private fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<Mipmap>): Bitmap {
         if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
             val new = createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            new.setPixel(0, 0, mipmaps.last().self[0])
             Toast.makeText(this, "The value is too small; can't resize!", Toast.LENGTH_LONG).show()
             return new
         }
@@ -181,16 +215,64 @@ class FunScaleActivity : AppCompatActivity() {
             return orig
         }
 
-        val new = createBitmap(
-            (orig.width * scaleFactor).roundToInt(),
-            (orig.height * scaleFactor).roundToInt(),
-            Bitmap.Config.ARGB_8888
-        )
+        val new = createBitmap((orig.width * scaleFactor).roundToInt(), (orig.height * scaleFactor).roundToInt(), Bitmap.Config.ARGB_8888)
 
-        val pixels = IntArray(orig.width * orig.height)
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+        if (scaleFactor < 1.0) {
+            var scale = 1.0
+            var scalePrev = scale
+
+            for (i in mipmaps.indices) {
+                if (scale <= scaleFactor) {
+                    // interpolates between i and i - 1 into pixelsResulting[]
+                    val pixelsResulting = IntArray(new.width * new.height)
+                    val weightOfBigger = (scaleFactor - scale) / (scalePrev - scale)
+
+                    val scaleUp = scaleFactor / scale
+                    val scaleDown = scaleFactor / scalePrev
+                    val pixelsFromBigger = getPixelsBilinearlyScaled(
+                        mipmaps[i - 1].self,
+                        scaleDown,
+                        mipmaps[i - 1].width,
+                        mipmaps[i - 1].height
+                    )
+                    val pixelsFromSmaller = getPixelsBilinearlyScaled(
+                        mipmaps[i].self,
+                        scaleUp,
+                        mipmaps[i].width,
+                        mipmaps[i].height
+                    )
+
+                    // fixes scaling from mipmaps giving wrong amount of pixels in width
+                    val widthDiffFromFromBigger = (scaleDown * mipmaps[i - 1].width).roundToInt() - new.width
+                    val widthDiffFromFromSmaller = (scaleUp * mipmaps[i].width).roundToInt() - new.width
+                    for (i in 0 until new.height) {
+                        for (j in 0 until new.width) {
+                            pixelsResulting[i * new.width + j] = Color.rgb(
+                                (Color.red(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                                        + Color.red(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
+
+                                (Color.green(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                                        + Color.green(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
+
+                                (Color.blue(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                                        + Color.blue(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt()
+                            )
+                        }
+                    }
+
+                    new.setPixels(pixelsResulting, 0, new.width, 0, 0, new.width, new.height)
+                    return new
+                }
+
+                scalePrev = scale
+                scale *= .5
+            }
+        }
+
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         new.setPixels(
-            getPixelsBilinearlyScaled(pixels, scaleFactor, orig.width, orig.height),
+            getPixelsBilinearlyScaled(pixelsOrig, scaleFactor, orig.width, orig.height),
             0,
             new.width,
             0,
