@@ -10,9 +10,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonBack
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonFilter
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -76,6 +77,16 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             val intentScale = Intent(this, FunScaleActivity::class.java)
             intentScale.putExtra("imagePath", fileUri.toString())
             startActivity(intentScale)
+        }
+
+        buttonSave.setOnClickListener {
+            runBlocking {
+                //progress bar
+
+                CoroutineScope(Dispatchers.Default).launch {
+//                    (application as IntermediateResults).save()
+                }
+            }
         }
 
     }
