@@ -24,6 +24,7 @@ import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EditPhotoActivity : AppCompatActivity() {
 
     companion object {
@@ -40,9 +41,7 @@ class EditPhotoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_photo)
 
             //получение фотографии
-            val intent = intent
-            val imagePath = intent.getStringExtra("imagePath")
-            val fileUri = Uri.parse(imagePath)
+            val fileUri: Uri = intent.getParcelableExtra("imagePath")
         
             //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
             var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)

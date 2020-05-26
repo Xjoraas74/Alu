@@ -164,5 +164,4 @@ class FunScaleActivity : AppCompatActivity() {
 
         return new
     }
-
 }

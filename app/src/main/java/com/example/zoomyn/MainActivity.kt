@@ -1,14 +1,18 @@
 package com.example.zoomyn
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,7 +21,13 @@ class MainActivity : AppCompatActivity() {
         private const val IMAGE_PICK_CODE = 1000
         //код разрешения
         private const val PERMISSION_CODE = 1001
+        //код взятия избражения из камеры
+        private const val IMAGE_CAPTURE_CODE = 1002
     }
+
+    var image_uri: Uri? = null
+    var flagCamera: Boolean = false
+    var flagGallery: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //тема для Splash-screen
@@ -30,6 +40,7 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                     //разрешение не найдено/отказано
+                    flagGallery = true
                     val permissions = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     //показать всплывающее окно с запросом разрешения выполнения
                     requestPermissions(permissions, PERMISSION_CODE)
@@ -44,6 +55,28 @@ class MainActivity : AppCompatActivity() {
                 pickImageFromGallery()
             }
         }
+
+        buttonCamera.setOnClickListener {
+            //проверка разрешения среды выполнения
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(android.Manifest.permission.CAMERA ) == PackageManager.PERMISSION_DENIED || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    //разрешение не найдено/отказано
+                    flagCamera = true
+                    val permissions = arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    //показать всплывающее окно с запросом разрешения выполнения
+                    requestPermissions(permissions, PERMISSION_CODE)
+                }
+                else {
+                    //разрешение получено
+                    openCamera()
+                }
+            }
+            else {
+                //ОС is <= Marshmallow
+                openCamera()
+            }
+        }
+
     }
 
     private fun pickImageFromGallery() {
@@ -53,12 +86,27 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
+    private fun openCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+        image_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //разрешение от всплывающего окна предоставлено
-                    pickImageFromGallery()
+                   if (flagCamera) {
+                       openCamera()
+                   }
+                    else {
+                       pickImageFromGallery()
+                   }
                 }
                 else {
                     //разрешение от всплывающего окна отклонено
@@ -70,11 +118,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            val selectedImage: Uri? = data!!.data
-            val i = Intent(this, EditPhotoActivity::class.java)
-            i.putExtra("imagePath", selectedImage.toString())
-            startActivity(i)
+        //передача изображения из камеры
+        if (resultCode == Activity.RESULT_OK) {
+            if (image_uri != null) {
+                val intent = Intent(this, EditPhotoActivity::class.java)
+                intent.putExtra("imagePath", image_uri)
+                startActivity(intent)
+            }
+        }
+        //передача изображения из галереи
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val uri = data.data
+            try {
+                if (uri != null) {
+                    val intent = Intent(this, EditPhotoActivity::class.java)
+                    intent.putExtra("imagePath", uri)
+                    startActivity(intent)
+                }
+                else {
+                    Toast.makeText(this, "Please select a photo", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
     }
 }
