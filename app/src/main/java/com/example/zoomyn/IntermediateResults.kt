@@ -2,14 +2,40 @@ package com.example.zoomyn
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.net.Uri
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.*
 
 class IntermediateResults : Application() {
     // for undo
-    val list = mutableListOf<Bitmap>()
+    val bitmapsList = mutableListOf<Bitmap>()
 
     // to remember what functions must be called on original image
     val functionCalls = mutableListOf<Double>()
+
+    // ???
+    private fun saveFile(bm: Bitmap): Uri? {
+        val wrapper = ContextWrapper(applicationContext)
+
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bm.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return Uri.parse(file.absolutePath)
+    }
 
     fun save(original: Bitmap) {
         var code: Double
@@ -57,5 +83,27 @@ class IntermediateResults : Application() {
 
             resultList.drop(1)
         }
+        saveFile(resultList[0])
+    }
+
+    fun undo() {
+        var k = 0
+        var kPrev = k
+
+        while (k < functionCalls.count()) {
+            kPrev = k
+            when (functionCalls[k]) {
+                1.0, 2.0, 3.0, 4.0, 7.0 -> k++
+                5.0, 6.0, 8.0 -> k += 2
+                9.0 -> k += 4
+            }
+        }
+        when (functionCalls[kPrev]) {
+            1.0, 2.0, 3.0, 4.0, 7.0 -> functionCalls.dropLast(1)
+            5.0, 6.0, 8.0 -> functionCalls.dropLast(2)
+            9.0 -> functionCalls.dropLast(4)
+        }
+
+        bitmapsList.dropLast(1)
     }
 }
