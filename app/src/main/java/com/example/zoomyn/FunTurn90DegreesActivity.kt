@@ -76,7 +76,7 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
     }
 
     //функция поворота изображения на 90 градусов
-    private fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
+    fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
 
         val pixelsOrig = IntArray(orig.width * orig.height)

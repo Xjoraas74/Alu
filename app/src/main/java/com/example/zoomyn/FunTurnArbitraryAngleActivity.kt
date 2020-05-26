@@ -54,7 +54,7 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
             }
         })
 
-        //функционирование кнопко нижнего меню
+        //функционирование кнопок нижнего меню
         buttonCancel.setOnClickListener {
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
@@ -79,18 +79,18 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
     }
 
-    private fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
+    fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val a = aDeg * PI / 180
         val iCentreX = new.width / 2
@@ -144,7 +144,10 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
                 iFloorY = floor(fTrueY).toInt()
                 iCeilingX = ceil(fTrueX).toInt()
                 iCeilingY = ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) continue
+                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) {
+                    pixelsNew[i * new.width + j] = Color.WHITE
+                    continue
+                }
 
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY

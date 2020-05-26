@@ -77,6 +77,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        buttonGame.setOnClickListener {
+            Intent(this, TestEditPhotoActivity::class.java).apply {
+                startActivity(this)
+            }
+        }
     }
 
     private fun pickImageFromGallery() {

@@ -1,5 +1,6 @@
 package com.example.zoomyn
 
+import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -200,7 +201,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
     //цветокоррекция и цветовые фильтры
     //фильтр "негатив"
-    private fun negativeFilter(orig: Bitmap): Bitmap {
+    fun negativeFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
@@ -219,7 +220,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     //фильтр "сепия"
-    private fun sepiaFilter(orig: Bitmap): Bitmap {
+    fun sepiaFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
@@ -244,7 +245,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     //чёрно-белый с оттенками серого
-    private fun grayScaleFilter(orig: Bitmap): Bitmap {
+    fun grayScaleFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
@@ -262,7 +263,7 @@ class EditPhotoActivity : AppCompatActivity() {
     }
 
     //чёрно-белый фильтр
-    private fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
+    fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
@@ -278,13 +279,12 @@ class EditPhotoActivity : AppCompatActivity() {
                 Color.WHITE
             }
         }
-
         new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
 
     //цветной фильтр
-    private fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
+    fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
