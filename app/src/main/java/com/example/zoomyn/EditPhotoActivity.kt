@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -36,89 +37,96 @@ class EditPhotoActivity : AppCompatActivity() {
         const val cyanColor = Color.CYAN
     }
 
-    class filter {
-        var value = 0
-        var color = 0
-    }
+    var filter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo)
 
-            //получение фотографии
-            val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        //получение фотографии
+        val fileUri: Uri = intent.getParcelableExtra("imagePath")
         val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
-        println(fileUri)
-        println("$pathToOriginal done")
-        
-            //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
-            var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
+
+        //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
+        val bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
+        println("${bmpEditImage?.width} ${bmpEditImage?.height}")
+        imageToEdit.setImageBitmap(bmpEditImage)
+
+        //создание изображения на кнопках выбора фильтра
+        var buttonChooseFilters = Bitmap.createBitmap(
+            bmpEditImage!!.width,
+            bmpEditImage.height,
+            Bitmap.Config.ARGB_8888
+        )
+        buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
+
+        buttonFilterThird.setImageBitmap((application as IntermediateResults).sepiaFilter(buttonChooseFilters))
+        buttonNormalFilter.setImageBitmap(buttonChooseFilters)
+        buttonFilterFirst.setImageBitmap((application as IntermediateResults).blackAndWhiteFilter(buttonChooseFilters))
+        buttonFilterFourth.setImageBitmap((application as IntermediateResults).grayScaleFilter(buttonChooseFilters))
+        buttonFilterSecond.setImageBitmap((application as IntermediateResults).negativeFilter(buttonChooseFilters))
+        buttonFilterFifth.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, redColor))
+        buttonFilterSixth.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, blueColor))
+        buttonFilterSeventh.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, greenColor))
+        buttonFilterEighth.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, yellowColor))
+        buttonFilterNinth.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, magentaColor))
+        buttonFilterTenth.setImageBitmap((application as IntermediateResults).coloredFilter(buttonChooseFilters, cyanColor))
+
+        //функционирование кнопок выбора фильтра
+        buttonNormalFilter.setOnClickListener {
             imageToEdit.setImageBitmap(bmpEditImage)
+            filter = 0
+        }
 
-            //создание изображения на кнопках выбора фильтра
-            var buttonChooseFilters = Bitmap.createBitmap(
-                bmpEditImage!!.width,
-                bmpEditImage.height,
-                Bitmap.Config.ARGB_8888
-            )
-            buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
+        buttonFilterFirst.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).blackAndWhiteFilter(bmpEditImage))
+            filter = 1
+        }
 
-            buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
-            buttonNormalFilter.setImageBitmap(buttonChooseFilters)
-            buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
-            buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
-            buttonFilterSecond.setImageBitmap(negativeFilter(buttonChooseFilters))
-            buttonFilterFifth.setImageBitmap(coloredFilter(buttonChooseFilters, redColor))
-            buttonFilterSixth.setImageBitmap(coloredFilter(buttonChooseFilters, blueColor))
-            buttonFilterSeventh.setImageBitmap(coloredFilter(buttonChooseFilters, greenColor))
-            buttonFilterEighth.setImageBitmap(coloredFilter(buttonChooseFilters, yellowColor))
-            buttonFilterNinth.setImageBitmap(coloredFilter(buttonChooseFilters, magentaColor))
-            buttonFilterTenth.setImageBitmap(coloredFilter(buttonChooseFilters, cyanColor))
+        buttonFilterSecond.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).negativeFilter(bmpEditImage))
+            filter = 4
+        }
 
-            //функционирование кнопок выбора фильтра
-            buttonNormalFilter.setOnClickListener {
-                imageToEdit.setImageBitmap(bmpEditImage)
-            }
+        buttonFilterThird.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).sepiaFilter(bmpEditImage))
+            filter = 3
+        }
 
-            buttonFilterFirst.setOnClickListener {
-                imageToEdit.setImageBitmap(blackAndWhiteFilter(bmpEditImage))
-            }
+        buttonFilterFourth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).grayScaleFilter(bmpEditImage))
+            filter = 2
+        }
 
-            buttonFilterSecond.setOnClickListener {
-                imageToEdit.setImageBitmap(negativeFilter(bmpEditImage))
-            }
+        buttonFilterFifth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, redColor))
+            filter = 5 + redColor
+        }
 
-            buttonFilterThird.setOnClickListener {
-                imageToEdit.setImageBitmap(sepiaFilter(bmpEditImage))
-            }
+        buttonFilterSixth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, blueColor))
+            filter = 5 + blueColor
+        }
 
-            buttonFilterFourth.setOnClickListener {
-                imageToEdit.setImageBitmap(grayScaleFilter(bmpEditImage))
-            }
+        buttonFilterSeventh.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, greenColor))
+            filter = 5 + greenColor
+        }
 
-            buttonFilterFifth.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, redColor))
-            }
+        buttonFilterEighth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, yellowColor))
+            filter = 5 + yellowColor
+        }
 
-            buttonFilterSixth.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, blueColor))
-            }
+        buttonFilterNinth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, magentaColor))
+            filter = 5 + magentaColor
+        }
 
-            buttonFilterSeventh.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, greenColor))
-            }
-
-            buttonFilterEighth.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, yellowColor))
-            }
-
-            buttonFilterNinth.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, magentaColor))
-            }
-
-            buttonFilterTenth.setOnClickListener {
-                imageToEdit.setImageBitmap(coloredFilter(bmpEditImage, cyanColor))
-            }
+        buttonFilterTenth.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).coloredFilter(bmpEditImage, cyanColor))
+            filter = 5 + cyanColor
+        }
 
         //функционирование кнопки "Back"
         buttonBack.setOnClickListener {
@@ -139,6 +147,15 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonEdit.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            (application as IntermediateResults).bitmapsList.add(bitmap)
+            when (filter) {
+                0 -> {}
+                1 -> (application as IntermediateResults).functionCalls.add(1.0)
+                2 -> (application as IntermediateResults).functionCalls.add(2.0)
+                3 -> (application as IntermediateResults).functionCalls.add(3.0)
+                4 -> (application as IntermediateResults).functionCalls.add(4.0)
+                else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
+            }
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
@@ -148,6 +165,15 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonSave.setOnClickListener {
+            when (filter) {
+                0 -> {}
+                1 -> (application as IntermediateResults).functionCalls.add(1.0)
+                2 -> (application as IntermediateResults).functionCalls.add(2.0)
+                3 -> (application as IntermediateResults).functionCalls.add(3.0)
+                4 -> (application as IntermediateResults).functionCalls.add(4.0)
+                else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
+            }
+
             runBlocking {
                 CoroutineScope(Dispatchers.Default).launch {
                     (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
@@ -158,6 +184,15 @@ class EditPhotoActivity : AppCompatActivity() {
                 //finish activity
             }
         }
+
+        textCancel.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
+        }
+
+        buttonUndo.setOnClickListener {
+            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
+        }
+
     }
 
     //функция для получения Uri из Bitmap
@@ -167,12 +202,12 @@ class EditPhotoActivity : AppCompatActivity() {
         var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
@@ -217,102 +252,4 @@ class EditPhotoActivity : AppCompatActivity() {
         return bitmap
     }
 
-    //цветокоррекция и цветовые фильтры
-    //фильтр "негатив"
-    fun negativeFilter(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixels = IntArray(orig.width * orig.height)
-
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-        /*
-        R = 255 – R
-        G = 255 – G
-        B = 255 – B
-        */
-        for (i in pixels.indices) {
-            pixels[i] = Color.rgb(255 - Color.red(pixels[i]), 255 - Color.green(pixels[i]), 255 - Color.blue(pixels[i]))
-        }
-
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-        return new
-    }
-
-    //фильтр "сепия"
-    fun sepiaFilter(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixels = IntArray(orig.width * orig.height)
-
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-        /*
-        outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
-        outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
-        outputBlue = (inputRed * .272) + (inputGreen *.534) + (inputBlue * .131)
-
-        if greater than 255, round to 255
-        */
-        for (i in pixels.indices) {
-            pixels[i] = Color.rgb(
-                min(255, (0.393 * Color.red(pixels[i]) + 0.769 * Color.green(pixels[i]) + 0.189 * Color.blue(pixels[i])).roundToInt()),
-                min(255, (0.349 * Color.red(pixels[i]) + 0.686 * Color.green(pixels[i]) + 0.168 * Color.blue(pixels[i])).roundToInt()),
-                min(255, (0.272 * Color.red(pixels[i]) + 0.534 * Color.green(pixels[i]) + 0.131 * Color.blue(pixels[i])).roundToInt())
-            )
-        }
-
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-        return new
-    }
-
-    //чёрно-белый с оттенками серого
-    fun grayScaleFilter(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixels = IntArray(orig.width * orig.height)
-
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-
-        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
-        var gray: Int
-        for (i in pixels.indices) {
-            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
-            pixels[i] = Color.rgb(gray, gray, gray)
-        }
-
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-        return new
-    }
-
-    //чёрно-белый фильтр
-    fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixels = IntArray(orig.width * orig.height)
-
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-
-        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
-        var gray: Int
-        for (i in pixels.indices) {
-            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
-            pixels[i] = if (gray <= 127) {
-                Color.BLACK
-            } else {
-                Color.WHITE
-            }
-        }
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-        return new
-    }
-
-    //цветной фильтр
-    fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val pixels = IntArray(orig.width * orig.height)
-
-        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-
-        for (i in pixels.indices) {
-           pixels[i] = col and pixels[i]
-        }
-
-        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
-        return new
-    }
 }

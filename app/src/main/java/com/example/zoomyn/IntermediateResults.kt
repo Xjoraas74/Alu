@@ -12,6 +12,8 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.core.graphics.ColorUtils
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.File.separator
 import java.io.FileOutputStream
@@ -81,28 +83,26 @@ class IntermediateResults : Application() {
     }
 
     fun save(uri: Uri, context: Context) {
+        println("STARTED SAVING")
         var code: Double
         val resultList = mutableListOf<Bitmap>()
         resultList.add(
             BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
         )
-        println("${functionCalls.count()}")
-        println("${functionCalls[0]} ${functionCalls[1]}")
         while (functionCalls.count() > 0) {
             code = functionCalls[0]
             // Pops out the code. Pop all function argument values in every case of when!
             functionCalls.removeAt(0)
-            println("$functionCalls")
 
             when (code) {
-                1.0 -> resultList.add((Activity() as EditPhotoActivity).blackAndWhiteFilter(resultList[0]))
-                2.0 -> resultList.add((Activity() as EditPhotoActivity).grayScaleFilter(resultList[0]))
-                3.0 -> resultList.add((Activity() as EditPhotoActivity).sepiaFilter(resultList[0]))
-                4.0 -> resultList.add((Activity() as EditPhotoActivity).negativeFilter(resultList[0]))
+                1.0 -> resultList.add(blackAndWhiteFilter(resultList[0]))
+                2.0 -> resultList.add(grayScaleFilter(resultList[0]))
+                3.0 -> resultList.add(sepiaFilter(resultList[0]))
+                4.0 -> resultList.add(negativeFilter(resultList[0]))
                 5.0 -> {
                     val color = functionCalls[0].toInt()
                     functionCalls.removeAt(0)
-                    resultList.add((Activity() as EditPhotoActivity).coloredFilter(resultList[0], color))
+                    resultList.add(coloredFilter(resultList[0], color))
                 }
                 6.0 -> {
                     val factor = functionCalls[0]
@@ -113,7 +113,7 @@ class IntermediateResults : Application() {
                     }
                     resultList.add(scale(resultList[0], factor, mipmaps))
                 }
-                7.0 -> resultList.add((Activity() as FunTurn90DegreesActivity).rotate90DegreesClockwise(resultList[0]))
+                7.0 -> resultList.add(rotate90DegreesClockwise(resultList[0]))
                 8.0 -> {
                     val angle = functionCalls[0].toInt()
                     functionCalls.removeAt(0)
@@ -126,7 +126,7 @@ class IntermediateResults : Application() {
                     functionCalls.removeAt(0)
                     functionCalls.removeAt(0)
                     functionCalls.removeAt(0)
-                    resultList.add((Activity() as FunMaskingActivity).callUnsharpMasking(resultList[0], amount, radius, threshold))
+                    resultList.add(callUnsharpMasking(resultList[0], amount, radius, threshold))
                 }
             }
 
@@ -134,37 +134,42 @@ class IntermediateResults : Application() {
         }
 
         saveImage(resultList[0], context, "Zoomyn")
-        println("IT'S ALL DONE")
+        println("SUCCESSFULLY SAVED")
         bitmapsList.removeAll(bitmapsList)
     }
 
-    fun undo() {
-        var k = 0
-        var kPrev = k
+    fun undo(bitmapToUndo: Bitmap): Bitmap {
+        if (bitmapsList.count() > 1) {
+            var k = 0
+            var kPrev = k
 
-        while (k < functionCalls.count()) {
-            kPrev = k
-            when (functionCalls[k]) {
-                1.0, 2.0, 3.0, 4.0, 7.0 -> k++
-                5.0, 6.0, 8.0 -> k += 2
-                9.0 -> k += 4
+            while (k < functionCalls.count()) {
+                kPrev = k
+                when (functionCalls[k]) {
+                    1.0, 2.0, 3.0, 4.0, 7.0 -> k++
+                    5.0, 6.0, 8.0 -> k += 2
+                    9.0 -> k += 4
+                }
             }
-        }
-        when (functionCalls[kPrev]) {
-            1.0, 2.0, 3.0, 4.0, 7.0 -> functionCalls.removeAt(functionCalls.lastIndex)
-            5.0, 6.0, 8.0 -> {
-                functionCalls.removeAt(functionCalls.lastIndex)
-                functionCalls.removeAt(functionCalls.lastIndex)
+            when (functionCalls[kPrev]) {
+                1.0, 2.0, 3.0, 4.0, 7.0 -> functionCalls.removeAt(functionCalls.lastIndex)
+                5.0, 6.0, 8.0 -> {
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                }
+                9.0 -> {
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                }
             }
-            9.0 -> {
-                functionCalls.removeAt(functionCalls.lastIndex)
-                functionCalls.removeAt(functionCalls.lastIndex)
-                functionCalls.removeAt(functionCalls.lastIndex)
-                functionCalls.removeAt(functionCalls.lastIndex)
-            }
+
+            bitmapsList.removeAt(bitmapsList.lastIndex)
+            return bitmapsList.last()
         }
 
-        bitmapsList.removeAt(bitmapsList.lastIndex)
+        return bitmapToUndo
     }
 
     fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
@@ -427,5 +432,235 @@ class IntermediateResults : Application() {
                 m.add(this)
             }
         }
+    }
+
+    //цветокоррекция и цветовые фильтры
+    //фильтр "негатив"
+    fun negativeFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+        /*
+        R = 255 – R
+        G = 255 – G
+        B = 255 – B
+        */
+        for (i in pixels.indices) {
+            pixels[i] = Color.rgb(255 - Color.red(pixels[i]), 255 - Color.green(pixels[i]), 255 - Color.blue(pixels[i]))
+        }
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //фильтр "сепия"
+    fun sepiaFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+        /*
+        outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
+        outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
+        outputBlue = (inputRed * .272) + (inputGreen *.534) + (inputBlue * .131)
+
+        if greater than 255, round to 255
+        */
+        for (i in pixels.indices) {
+            pixels[i] = Color.rgb(
+                min(255, (0.393 * Color.red(pixels[i]) + 0.769 * Color.green(pixels[i]) + 0.189 * Color.blue(pixels[i])).roundToInt()),
+                min(255, (0.349 * Color.red(pixels[i]) + 0.686 * Color.green(pixels[i]) + 0.168 * Color.blue(pixels[i])).roundToInt()),
+                min(255, (0.272 * Color.red(pixels[i]) + 0.534 * Color.green(pixels[i]) + 0.131 * Color.blue(pixels[i])).roundToInt())
+            )
+        }
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //чёрно-белый с оттенками серого
+    fun grayScaleFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
+        var gray: Int
+        for (i in pixels.indices) {
+            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
+            pixels[i] = Color.rgb(gray, gray, gray)
+        }
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //чёрно-белый фильтр
+    fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        // Gray = (Red * 0.3 + Green * 0.59 + Blue * 0.11)
+        var gray: Int
+        for (i in pixels.indices) {
+            gray = (Color.red(pixels[i]) * 0.3 + Color.green(pixels[i]) * 0.59 + Color.blue(pixels[i]) * 0.11).roundToInt()
+            pixels[i] = if (gray <= 127) {
+                Color.BLACK
+            } else {
+                Color.WHITE
+            }
+        }
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //цветной фильтр
+    fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(orig.width * orig.height)
+
+        orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
+
+        for (i in pixels.indices) {
+            pixels[i] = col and pixels[i]
+        }
+
+        new.setPixels(pixels, 0, new.width, 0, 0, new.width, new.height)
+        return new
+    }
+
+    //функция поворота изображения на 90 градусов
+    fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
+        val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
+
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+        val pixelsCount = orig.width * orig.height
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
+        for (i in 0 until new.height) {
+            for (j in 0 until new.width) {
+                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
+            }
+        }
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
+
+        return new
+    }
+
+    private fun unsharpMasking(
+        pixelsOrig: IntArray,
+        pixelsNew: IntArray,
+        am: Int,
+        threshold: Float,
+        gaussianDistribution: DoubleArray,
+        iMin: Int,
+        iMax:Int,
+        bitmapWidth: Int,
+        maxPossibleY: Int
+    ) {
+        var convolvedHorizontallyRed = 0.0
+        var convolvedHorizontallyGreen = 0.0
+        var convolvedHorizontallyBlue = 0.0
+        var convolvedVerticallyRed = 0.0
+        var convolvedVerticallyGreen = 0.0
+        var convolvedVerticallyBlue = 0.0
+        var redDiff: Int
+        var greenDiff: Int
+        var blueDiff: Int
+        var red: Int
+        var green: Int
+        var blue: Int
+        var kAdjusted: Int
+        val hslDiff = FloatArray(3)
+        val hslUsed = FloatArray(3)
+
+        for (i in iMin..iMax) {
+            for (j in 0 until bitmapWidth) {
+                // don't make convolution for boundary pixels?
+                for (k in gaussianDistribution.indices) {
+                    kAdjusted = min(bitmapWidth - 1, max(0, j + k))
+                    convolvedHorizontallyRed += Color.red(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyGreen += Color.green(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
+                    convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
+                }
+                for (k in gaussianDistribution.indices) {
+                    kAdjusted = min(maxPossibleY, max(0, i + k))
+                    convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
+                    convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
+                    convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
+                }
+                red = Color.red(pixelsOrig[i * bitmapWidth + j])
+                green = Color.green(pixelsOrig[i * bitmapWidth + j])
+                blue = Color.blue(pixelsOrig[i * bitmapWidth + j])
+                redDiff = red - ((convolvedHorizontallyRed + convolvedVerticallyRed) / 2).roundToInt()
+                greenDiff = green - ((convolvedHorizontallyGreen + convolvedVerticallyGreen) / 2).roundToInt()
+                blueDiff = blue - ((convolvedHorizontallyBlue + convolvedVerticallyBlue) / 2).roundToInt()
+
+                ColorUtils.RGBToHSL(redDiff, greenDiff, blueDiff, hslDiff)
+                if (hslDiff[2] > threshold) {
+                    ColorUtils.RGBToHSL(red, green, blue, hslUsed)
+                    hslUsed[2] += hslDiff[2] * .01.toFloat() * am
+                    pixelsNew[i * bitmapWidth + j] = ColorUtils.HSLToColor(hslUsed)
+                } else {
+                    pixelsNew[i * bitmapWidth + j] = pixelsOrig[i * bitmapWidth + j]
+                }
+
+                convolvedHorizontallyRed = 0.0
+                convolvedHorizontallyGreen = 0.0
+                convolvedHorizontallyBlue = 0.0
+                convolvedVerticallyRed = 0.0
+                convolvedVerticallyGreen = 0.0
+                convolvedVerticallyBlue = 0.0
+            }
+        }
+    }
+
+    fun callUnsharpMasking(orig: Bitmap, amount: Int, radius: Int, threshold: Int): Bitmap {
+        // amount value is taken in percents
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+
+        // creates Gaussian distribution from row of Pascal's triangle
+        val gaussianDistribution = DoubleArray(radius * 2 + 1)
+        gaussianDistribution[0] = 1.0
+        var sum = gaussianDistribution[0]
+        for (i in 1 until gaussianDistribution.size) {
+            gaussianDistribution[i] = gaussianDistribution[i - 1] * (gaussianDistribution.size - i) / i
+            sum += gaussianDistribution[i]
+        }
+        for (i in gaussianDistribution.indices) {
+            gaussianDistribution[i] = gaussianDistribution[i] / sum
+        }
+
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+        runBlocking {
+            coroutineScope {
+                val n = 100 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        unsharpMasking(
+                            pixelsOrig,
+                            pixelsNew,
+                            amount,
+                            1.toFloat() / 255 * threshold,
+                            gaussianDistribution,
+                            it * new.height / n,
+                            if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 },
+                            new.width,
+                            new.height - 1
+                        )
+                    }
+                }.awaitAll()
+            }
+        }
+
+        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
+        return new
     }
 }

@@ -44,6 +44,8 @@ class FunScaleActivity : AppCompatActivity() {
 
     private val mipmaps = mutableListOf<Mipmap>()
 
+    var scale = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fun_scale)
@@ -52,6 +54,7 @@ class FunScaleActivity : AppCompatActivity() {
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
+        val pathToOriginal: Uri = Uri.parse(intent.getStringExtra("pathToOriginal"))
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
@@ -63,10 +66,10 @@ class FunScaleActivity : AppCompatActivity() {
         seekBarScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarScale.text = "Увеличить в $i " +
+                textSeekBarScale.text = "Увеличить в ${i.toDouble() / 10} " +
                 when (i) {
-                    2, 3, 4 -> "раза"
-                    else -> "раз"
+                    10 -> "раз"
+                    else -> "раза"
                 }
             }
 
@@ -75,8 +78,8 @@ class FunScaleActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    val value = seekBarScale.progress.toDouble()
-                    imageToEdit.setImageBitmap((application as IntermediateResults).scale(currentBitmap, value, mipmaps))
+                    scale = seekBarScale.progress.toDouble() / 10
+                    imageToEdit.setImageBitmap((application as IntermediateResults).scale(currentBitmap, scale, mipmaps))
                 }
             }
         })
@@ -95,6 +98,8 @@ class FunScaleActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
+            i.putExtra("pathToOriginal", pathToOriginal.toString())
+            (application as IntermediateResults).functionCalls.addAll(listOf(6.0, scale))
             startActivity(i)
         }
 

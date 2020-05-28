@@ -17,6 +17,7 @@ import java.io.OutputStream
 import java.util.*
 
 class FunTurn90DegreesActivity : AppCompatActivity() {
+    var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +27,7 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
+        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
@@ -36,7 +38,8 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
         //функционирование кнопки поворота изображения
         buttonClickForTurn.setOnClickListener {
             currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            imageToEdit.setImageBitmap(rotate90DegreesClockwise(currentBitmap))
+            imageToEdit.setImageBitmap((application as IntermediateResults).rotate90DegreesClockwise(currentBitmap))
+            count++
         }
 
         //функционирование кнопок нижнего меню
@@ -53,6 +56,11 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
+            i.putExtra("pathToOriginal", pathToOriginal.toString())
+            for (i in 1..count % 4) {
+                (application as IntermediateResults).functionCalls.add(7.0)
+            }
+//            println("${(application as IntermediateResults).functionCalls} list?")
             startActivity(i)
         }
     }
@@ -75,22 +83,4 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
         return Uri.parse(file.absolutePath)
     }
 
-    //функция поворота изображения на 90 градусов
-    fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
-        val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
-
-        val pixelsOrig = IntArray(orig.width * orig.height)
-        val pixelsNew = IntArray(new.width * new.height)
-        val pixelsCount = orig.width * orig.height
-        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
-                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
-            }
-        }
-        new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
-
-        return new
-    }
 }
