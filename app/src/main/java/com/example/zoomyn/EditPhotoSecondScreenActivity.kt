@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -29,6 +30,9 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
+        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        println(fileUri)
+        println("$pathToOriginal done")
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
@@ -64,6 +68,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         buttonTurn.setOnClickListener {
             val intentTurn = Intent(this, FunTurnActivity::class.java)
             intentTurn.putExtra("imagePath", fileUri.toString())
+            intentTurn.putExtra("pathToOriginal", pathToOriginal.toString())
             startActivity(intentTurn)
         }
         //маскирование
@@ -81,11 +86,13 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
 
         buttonSave.setOnClickListener {
             runBlocking {
+                CoroutineScope(Dispatchers.Default).launch {
+                    (application as IntermediateResults).save(pathToOriginal, this@EditPhotoSecondScreenActivity)
+                }
+
                 //progress bar
 
-                CoroutineScope(Dispatchers.Default).launch {
-//                    (application as IntermediateResults).save()
-                }
+                //await finish saving, close progress bar, finish activity
             }
         }
 
@@ -98,12 +105,12 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)

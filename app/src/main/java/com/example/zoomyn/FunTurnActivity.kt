@@ -25,6 +25,9 @@ class FunTurnActivity : AppCompatActivity() {
         val intent = intent
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
+        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        println(fileUri)
+        println("$pathToOriginal done")
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
@@ -50,6 +53,7 @@ class FunTurnActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val i = Intent(this, FunTurnArbitraryAngle::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
+            i.putExtra("pathToOriginal", pathToOriginal.toString())
             startActivity(i)
         }
 

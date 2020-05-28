@@ -1,6 +1,5 @@
 package com.example.zoomyn
 
-import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -16,10 +15,10 @@ import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.*
 import java.util.*
 import kotlin.math.min
@@ -37,12 +36,20 @@ class EditPhotoActivity : AppCompatActivity() {
         const val cyanColor = Color.CYAN
     }
 
+    class filter {
+        var value = 0
+        var color = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo)
 
             //получение фотографии
             val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
+        println(fileUri)
+        println("$pathToOriginal done")
         
             //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
             var bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
@@ -56,9 +63,7 @@ class EditPhotoActivity : AppCompatActivity() {
             )
             buttonChooseFilters = decodeSampledBitmapFromFile(fileUri, 256, 256, this)
 
-            CoroutineScope(Dispatchers.Default).launch {
-                buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
-            }
+            buttonFilterThird.setImageBitmap(sepiaFilter(buttonChooseFilters))
             buttonNormalFilter.setImageBitmap(buttonChooseFilters)
             buttonFilterFirst.setImageBitmap(blackAndWhiteFilter(buttonChooseFilters))
             buttonFilterFourth.setImageBitmap(grayScaleFilter(buttonChooseFilters))
@@ -138,7 +143,20 @@ class EditPhotoActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
+            i.putExtra("pathToOriginal", pathToOriginal.toString())
             startActivity(i)
+        }
+
+        buttonSave.setOnClickListener {
+            runBlocking {
+                CoroutineScope(Dispatchers.Default).launch {
+                    (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
+                }
+
+                //progress bar
+
+                //finish activity
+            }
         }
     }
 

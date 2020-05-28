@@ -128,6 +128,7 @@ class MainActivity : AppCompatActivity() {
             if (image_uri != null) {
                 val intent = Intent(this, EditPhotoActivity::class.java)
                 intent.putExtra("imagePath", image_uri)
+                intent.putExtra("pathToOriginal", image_uri)
                 startActivity(intent)
             }
         }
@@ -138,6 +139,7 @@ class MainActivity : AppCompatActivity() {
                 if (uri != null) {
                     val intent = Intent(this, EditPhotoActivity::class.java)
                     intent.putExtra("imagePath", uri)
+                    intent.putExtra("pathToOriginal", uri)
                     startActivity(intent)
                 }
                 else {

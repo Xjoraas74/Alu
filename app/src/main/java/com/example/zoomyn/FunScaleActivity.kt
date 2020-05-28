@@ -63,12 +63,11 @@ class FunScaleActivity : AppCompatActivity() {
         seekBarScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarScale.text = "Увеличить в $i" +
+                textSeekBarScale.text = "Увеличить в $i " +
                 when (i) {
                     2, 3, 4 -> "раза"
                     else -> "раз"
                 }
-                //textSeekBarScale.text = "$i°"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -77,7 +76,7 @@ class FunScaleActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
                     val value = seekBarScale.progress.toDouble()
-                    imageToEdit.setImageBitmap(scale(currentBitmap, value, mipmaps))
+                    imageToEdit.setImageBitmap((application as IntermediateResults).scale(currentBitmap, value, mipmaps))
                 }
             }
         })
@@ -99,24 +98,7 @@ class FunScaleActivity : AppCompatActivity() {
             startActivity(i)
         }
 
-        createMipmaps(mipmaps, currentBitmap)
-    }
-
-    fun createMipmaps(m: MutableList<Mipmap>, orig: Bitmap) {
-        Mipmap().apply {
-            this.create(orig.width, orig.height)
-            orig.getPixels(this.self, 0, orig.width, 0, 0, orig.width, orig.height)
-            m.add(this)
-        }
-
-        // used    do { } while ()    before
-        while (m.last().width != 1 || m.last().height != 1) {
-            Mipmap().apply {
-                this.create((m.last().width * .5).roundToInt(), (m.last().height * .5).roundToInt())
-                this.self = getPixelsBilinearlyScaled(m.last().self, .5, m.last().width, m.last().height)
-                m.add(this)
-            }
-        }
+        (application as IntermediateResults).createMipmaps(mipmaps, currentBitmap)
     }
 
     //функция для получения Uri из Bitmap
@@ -135,155 +117,5 @@ class FunScaleActivity : AppCompatActivity() {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
-    }
-
-    private fun getPixelsBilinearlyScaled(orig: IntArray, scaleFactor: Double, origWidth: Int, origHeight: Int): IntArray {
-        val nw = (origWidth * scaleFactor).roundToInt()
-        val nh = (origHeight * scaleFactor).roundToInt()
-        val pixelsNew = IntArray(nw * nh)
-
-        var iFloorX: Int
-        var iCeilingX: Int
-        var iFloorY: Int
-        var iCeilingY: Int
-        var fTrueX: Double
-        var fTrueY: Double
-        var fDeltaX: Double
-        var fDeltaY: Double
-        var clrTopLeft: Int
-        var clrTopRight: Int
-        var clrBottomLeft: Int
-        var clrBottomRight: Int
-        var fTopRed: Double
-        var fTopGreen: Double
-        var fTopBlue: Double
-        var fBottomRed: Double
-        var fBottomGreen: Double
-        var fBottomBlue: Double
-        var iRed: Int
-        var iGreen: Int
-        var iBlue: Int
-
-        for (i in 0 until nh) {
-            for (j in 0 until nw) {
-                fTrueX = j / scaleFactor
-                fTrueY = i / scaleFactor
-
-                iFloorX = kotlin.math.floor(fTrueX).toInt()
-                iFloorY = kotlin.math.floor(fTrueY).toInt()
-                iCeilingX = kotlin.math.ceil(fTrueX).toInt()
-                iCeilingY = kotlin.math.ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= origWidth || iFloorY < 0 || iCeilingY >= origHeight) continue
-
-                fDeltaX = fTrueX - iFloorX
-                fDeltaY = fTrueY - iFloorY
-
-                // indices in pixelsOrig:
-                clrTopLeft = iFloorY * origWidth + iFloorX
-                clrTopRight = iFloorY * origWidth + iCeilingX
-                clrBottomLeft = iCeilingY * origWidth + iFloorX
-                clrBottomRight = iCeilingY * origWidth + iCeilingX
-
-                // linearly interpolate horizontally between top neighbours
-                fTopRed = (1 - fDeltaX) * Color.red(orig[clrTopLeft]) + fDeltaX * Color.red(orig[clrTopRight])
-                fTopGreen = (1 - fDeltaX) * Color.green(orig[clrTopLeft]) + fDeltaX * Color.green(orig[clrTopRight])
-                fTopBlue = (1 - fDeltaX) * Color.blue(orig[clrTopLeft]) + fDeltaX * Color.blue(orig[clrTopRight])
-
-                // linearly interpolate horizontally between bottom neighbours
-                fBottomRed = (1 - fDeltaX) * Color.red(orig[clrBottomLeft]) + fDeltaX * Color.red(orig[clrBottomRight])
-                fBottomGreen = (1 - fDeltaX) * Color.green(orig[clrBottomLeft]) + fDeltaX * Color.green(orig[clrBottomRight])
-                fBottomBlue = (1 - fDeltaX) * Color.blue(orig[clrBottomLeft]) + fDeltaX * Color.blue(orig[clrBottomRight])
-
-                // linearly interpolate vertically between top and bottom interpolated results
-                iRed = ((1 - fDeltaY) * fTopRed + fDeltaY * fBottomRed).roundToInt()
-                iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
-                iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
-
-                pixelsNew[i * nw + j] = Color.rgb(iRed, iGreen, iBlue)
-            }
-        }
-
-        return pixelsNew
-    }
-
-    //функция масштабирования полученного изображения
-    fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<Mipmap>): Bitmap {
-        if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
-            val new = createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-            new.setPixel(0, 0, mipmaps.last().self[0])
-            Toast.makeText(this, "The value is too small; can't resize!", Toast.LENGTH_LONG).show()
-            return new
-        }
-
-        if (scaleFactor == 1.0) {
-            return orig
-        }
-
-        val new = createBitmap((orig.width * scaleFactor).roundToInt(), (orig.height * scaleFactor).roundToInt(), Bitmap.Config.ARGB_8888)
-
-        if (scaleFactor < 1.0) {
-            var scale = 1.0
-            var scalePrev = scale
-
-            for (i in mipmaps.indices) {
-                if (scale <= scaleFactor) {
-                    // interpolates between i and i - 1 into pixelsResulting[]
-                    val pixelsResulting = IntArray(new.width * new.height)
-                    val weightOfBigger = (scaleFactor - scale) / (scalePrev - scale)
-
-                    val scaleUp = scaleFactor / scale
-                    val scaleDown = scaleFactor / scalePrev
-                    val pixelsFromBigger = getPixelsBilinearlyScaled(
-                        mipmaps[i - 1].self,
-                        scaleDown,
-                        mipmaps[i - 1].width,
-                        mipmaps[i - 1].height
-                    )
-                    val pixelsFromSmaller = getPixelsBilinearlyScaled(
-                        mipmaps[i].self,
-                        scaleUp,
-                        mipmaps[i].width,
-                        mipmaps[i].height
-                    )
-
-                    // fixes scaling from mipmaps giving wrong amount of pixels in width
-                    val widthDiffFromFromBigger = (scaleDown * mipmaps[i - 1].width).roundToInt() - new.width
-                    val widthDiffFromFromSmaller = (scaleUp * mipmaps[i].width).roundToInt() - new.width
-                    for (i in 0 until new.height) {
-                        for (j in 0 until new.width) {
-                            pixelsResulting[i * new.width + j] = Color.rgb(
-                                (Color.red(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.red(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
-
-                                (Color.green(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.green(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
-
-                                (Color.blue(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.blue(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt()
-                            )
-                        }
-                    }
-
-                    new.setPixels(pixelsResulting, 0, new.width, 0, 0, new.width, new.height)
-                    return new
-                }
-
-                scalePrev = scale
-                scale *= .5
-            }
-        }
-
-        val pixelsOrig = IntArray(orig.width * orig.height)
-        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        new.setPixels(
-            getPixelsBilinearlyScaled(pixelsOrig, scaleFactor, orig.width, orig.height),
-            0,
-            new.width,
-            0,
-            0,
-            new.width,
-            new.height
-        )
-        return new
     }
 }
