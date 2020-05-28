@@ -9,7 +9,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.SeekBar
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -17,6 +19,7 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.math.*
 import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.*
+import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.imageToEdit
 
 class FunTurnArbitraryAngle : AppCompatActivity() {
     var angle = 0
@@ -95,7 +98,5 @@ class FunTurnArbitraryAngle : AppCompatActivity() {
         }
         return Uri.parse(file.absolutePath)
     }
-
-
 
 }

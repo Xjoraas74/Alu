@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
@@ -36,6 +37,9 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
+
+        //скрытие progress bar'а
+        progressBar.visibility = View.GONE
 
         //функционирование кнопки "Back"
         buttonBack.setOnClickListener {
@@ -89,11 +93,17 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Default).launch {
                     (application as IntermediateResults).save(pathToOriginal, this@EditPhotoSecondScreenActivity)
                 }
-
                 //progress bar
-
-                //await finish saving, close progress bar, finish activity
+                progressBar.visibility = View.VISIBLE
             }
+            //await finish saving, close progress bar, finish activity
+            progressBar.visibility = View.GONE
+            val backAlertDialog = AlertDialog.Builder(this)
+            backAlertDialog.setIcon(R.drawable.ic_save)
+            backAlertDialog.setTitle("Выход")
+            backAlertDialog.setMessage("Фотография успешно сохранена")
+            backAlertDialog.setPositiveButton("Закрыть") { _, _ -> }
+            backAlertDialog.show()
         }
 
     }
