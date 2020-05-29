@@ -6,15 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".EditPhotoActivity">
 
-    <!--<ImageView
+    <ImageView
         android:id="@+id/imageViewOrig"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_width="50px"
+        android:layout_height="50px"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/i_2000_4000" />-->
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewNew"

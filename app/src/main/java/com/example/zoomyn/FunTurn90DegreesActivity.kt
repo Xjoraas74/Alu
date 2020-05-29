@@ -38,7 +38,7 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
         //функционирование кнопки поворота изображения
         buttonClickForTurn.setOnClickListener {
             currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            imageToEdit.setImageBitmap((application as IntermediateResults).rotate90DegreesClockwise(currentBitmap))
+            imageToEdit.setImageBitmap((application as IntermediateResults).callRotate90DegreesClockwise(currentBitmap))
             count++
         }
 
@@ -48,6 +48,7 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
             val i = Intent(this, FunTurnActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
+            i.putExtra("pathToOriginal", pathToOriginal.toString())
             startActivity(i)
         }
 
@@ -72,12 +73,12 @@ class FunTurn90DegreesActivity : AppCompatActivity() {
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)

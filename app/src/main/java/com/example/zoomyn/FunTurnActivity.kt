@@ -84,7 +84,7 @@ class FunTurnActivity : AppCompatActivity() {
 
         try{
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
         }catch (e: IOException){

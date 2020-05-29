@@ -10,16 +10,20 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.jakewharton.processphoenix.ProcessPhoenix
 import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonUndo
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
+import kotlinx.android.synthetic.main.activity_edit_photo.textCancel
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
+import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
 import kotlin.math.min
@@ -46,6 +50,8 @@ class EditPhotoActivity : AppCompatActivity() {
         //получение фотографии
         val fileUri: Uri = intent.getParcelableExtra("imagePath")
         val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
+        println(fileUri)
+        println(pathToOriginal)
 
         //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
         val bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
@@ -136,9 +142,7 @@ class EditPhotoActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id ->
-                val intentNegativeButton = Intent(this, MainActivity::class.java)
-                startActivity(intentNegativeButton)
+            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this)
             }
             backAlertDialog.show()
         }
@@ -161,6 +165,8 @@ class EditPhotoActivity : AppCompatActivity() {
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap.toString())
             i.putExtra("pathToOriginal", pathToOriginal.toString())
+            println(uriCurrentBitmap)
+            println(pathToOriginal)
             startActivity(i)
         }
 
@@ -204,7 +210,7 @@ class EditPhotoActivity : AppCompatActivity() {
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {

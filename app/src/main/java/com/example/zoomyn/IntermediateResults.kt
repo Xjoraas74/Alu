@@ -1,10 +1,8 @@
 package com.example.zoomyn
 
-import android.app.Activity
 import android.app.Application
 import android.content.ContentValues
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -17,9 +15,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.File.separator
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.OutputStream
-import java.util.*
 import kotlin.math.*
 
 
@@ -84,6 +80,7 @@ class IntermediateResults : Application() {
 
     fun save(uri: Uri, context: Context) {
         println("STARTED SAVING")
+        val tStart = System.currentTimeMillis()
         var code: Double
         val resultList = mutableListOf<Bitmap>()
         resultList.add(
@@ -113,7 +110,7 @@ class IntermediateResults : Application() {
                     }
                     resultList.add(scale(resultList[0], factor, mipmaps))
                 }
-                7.0 -> resultList.add(rotate90DegreesClockwise(resultList[0]))
+                7.0 -> resultList.add(callRotate90DegreesClockwise(resultList[0]))
                 8.0 -> {
                     val angle = functionCalls[0].toInt()
                     functionCalls.removeAt(0)
@@ -133,6 +130,8 @@ class IntermediateResults : Application() {
             resultList.removeAt(0)
         }
 
+        val tEnd = System.currentTimeMillis()
+        println("EDITED, took ${(tEnd - tStart).toDouble() / 1000}")
         saveImage(resultList[0], context, "Zoomyn")
         println("SUCCESSFULLY SAVED")
         bitmapsList.removeAll(bitmapsList)
@@ -533,20 +532,41 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //функция поворота изображения на 90 градусов
-    fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
+    private fun rotate90DegreesClockwise(orig: IntArray, new: IntArray, totalPixels: Int, ow: Int, nw: Int, iMin: Int, iMax: Int) {
+        for (i in iMin..iMax) {
+            for (j in 0 until nw) {
+                new[i * nw + j] = orig[totalPixels - (j + 1) * ow + i]
+            }
+        }
+    }
+
+    fun callRotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
 
         val pixelsOrig = IntArray(orig.width * orig.height)
         val pixelsNew = IntArray(new.width * new.height)
         val pixelsCount = orig.width * orig.height
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
-                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
+
+        runBlocking {
+            coroutineScope {
+                val n = 1 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        rotate90DegreesClockwise(
+                            pixelsOrig,
+                            pixelsNew,
+                            pixelsCount,
+                            orig.width,
+                            new.width,
+                            it * new.height / n,
+                            if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 }
+                        )
+                    }
+                }.awaitAll()
             }
         }
+
         new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
 
         return new
@@ -561,7 +581,8 @@ class IntermediateResults : Application() {
         iMin: Int,
         iMax:Int,
         bitmapWidth: Int,
-        maxPossibleY: Int
+        maxPossibleY: Int,
+        radius: Int
     ) {
         var convolvedHorizontallyRed = 0.0
         var convolvedHorizontallyGreen = 0.0
@@ -583,13 +604,13 @@ class IntermediateResults : Application() {
             for (j in 0 until bitmapWidth) {
                 // don't make convolution for boundary pixels?
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(bitmapWidth - 1, max(0, j + k))
+                    kAdjusted = min(bitmapWidth - 1, max(0, j + k - radius))
                     convolvedHorizontallyRed += Color.red(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                     convolvedHorizontallyGreen += Color.green(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                     convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                 }
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(maxPossibleY, max(0, i + k))
+                    kAdjusted = min(maxPossibleY, max(0, i + k - radius))
                     convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
                     convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
                     convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
@@ -641,7 +662,7 @@ class IntermediateResults : Application() {
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         runBlocking {
             coroutineScope {
-                val n = 100 // amount of coroutines to launch
+                val n = 5000 // amount of coroutines to launch
                 IntRange(0, n - 1).map {
                     async(Dispatchers.Default) {
                         unsharpMasking(
@@ -653,7 +674,8 @@ class IntermediateResults : Application() {
                             it * new.height / n,
                             if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 },
                             new.width,
-                            new.height - 1
+                            new.height - 1,
+                            radius
                         )
                     }
                 }.awaitAll()

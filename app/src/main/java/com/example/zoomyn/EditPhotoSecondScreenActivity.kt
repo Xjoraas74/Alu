@@ -1,16 +1,20 @@
 package com.example.zoomyn
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.jakewharton.processphoenix.ProcessPhoenix
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -18,6 +22,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
+
 
 class EditPhotoSecondScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +34,8 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         val imagePath = intent.getStringExtra("imagePath")
         val fileUri = Uri.parse(imagePath)
         val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        println(fileUri)
+        println(pathToOriginal)
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
@@ -44,9 +51,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id ->
-                val intentNegativeButton = Intent(this, MainActivity::class.java)
-                startActivity(intentNegativeButton)
+            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this)
             }
             backAlertDialog.show()
         }
@@ -59,6 +64,9 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val intentFilter = Intent(this, EditPhotoActivity::class.java)
             intentFilter.putExtra("imagePath", uriCurrentBitmap.toString())
+            intentFilter.putExtra("pathToOriginal", pathToOriginal.toString())
+            println(uriCurrentBitmap)
+            println(pathToOriginal)
             startActivity(intentFilter)
         }
 
@@ -130,7 +138,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {
@@ -138,5 +146,4 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         }
         return Uri.parse(file.absolutePath)
     }
-
 }
