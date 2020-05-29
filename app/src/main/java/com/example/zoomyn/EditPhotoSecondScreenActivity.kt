@@ -4,34 +4,36 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonBack
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonFilter
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonSave
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EditPhotoSecondScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo_second_screen)
 
-        //извлечение изображения из предыдущей активити c примененными фильтрами
-        val intent = intent
-        val imagePath = intent.getStringExtra("imagePath")
-        val fileUri = Uri.parse(imagePath)
-        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        //получение фотографии
+        val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
+
         println(fileUri)
         println("$pathToOriginal done")
 
@@ -39,7 +41,8 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         imageToEdit.setImageURI(fileUri)
 
         //скрытие progress bar'а
-        progressBar.visibility = View.GONE
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar) as ProgressBar
+        progressBar.visibility = View.INVISIBLE
 
         //функционирование кнопки "Back"
         buttonBack.setOnClickListener {
@@ -58,7 +61,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
 
         //функционирование кнопки "Фильтр" - нижнее меню
         buttonFilter.setOnClickListener {
-            //получение изображения с применимыми фильтрами
+            //получение изображения
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
@@ -72,7 +75,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         buttonTurn.setOnClickListener {
             val intentTurn = Intent(this, FunTurnActivity::class.java)
             intentTurn.putExtra("imagePath", fileUri.toString())
-            intentTurn.putExtra("pathToOriginal", pathToOriginal.toString())
             startActivity(intentTurn)
         }
         //маскирование
@@ -88,24 +90,30 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             startActivity(intentScale)
         }
 
+        //функционирование кнопки сохранения
         buttonSave.setOnClickListener {
             runBlocking {
-                CoroutineScope(Dispatchers.Default).launch {
+                val saving = CoroutineScope(Dispatchers.Default).async {
                     (application as IntermediateResults).save(pathToOriginal, this@EditPhotoSecondScreenActivity)
                 }
+
                 //progress bar
                 progressBar.visibility = View.VISIBLE
-            }
-            //await finish saving, close progress bar, finish activity
-            progressBar.visibility = View.GONE
-            val backAlertDialog = AlertDialog.Builder(this)
-            backAlertDialog.setIcon(R.drawable.ic_save)
-            backAlertDialog.setTitle("Выход")
-            backAlertDialog.setMessage("Фотография успешно сохранена")
-            backAlertDialog.setPositiveButton("Закрыть") { _, _ -> }
-            backAlertDialog.show()
-        }
+                println("shown")
 
+                //await finish saving, close progress bar, finish activity
+                saving.await()
+                progressBar.visibility = View.GONE
+                println("gone")
+                val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
+                backAlertDialog.setIcon(R.drawable.ic_save)
+                backAlertDialog.setTitle("Выход")
+                backAlertDialog.setMessage("Фотография успешно сохранена")
+                backAlertDialog.setPositiveButton("Закрыть") { _, _ -> }
+                backAlertDialog.show()
+                progressBar.visibility = View.GONE
+            }
+        }
     }
 
     //функция для получения Uri из Bitmap
