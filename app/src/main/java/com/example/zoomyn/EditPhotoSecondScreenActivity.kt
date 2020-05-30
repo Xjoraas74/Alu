@@ -31,17 +31,18 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
-
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EditPhotoSecondScreenActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_photo_second_screen)
 
-        //извлечение изображения из предыдущей активити c примененными фильтрами
-        val intent = intent
-        val imagePath = intent.getStringExtra("imagePath")
-        val fileUri = Uri.parse(imagePath)
-        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        //получение фотографии
+        val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
+
         println(fileUri)
         println(pathToOriginal)
 
@@ -49,7 +50,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         imageToEdit.setImageURI(fileUri)
 
         //скрытие progress bar'а
-        progressBar.visibility = View.GONE
+        progressBar.visibility = GONE
 
         //функционирование кнопки "Back"
         buttonBack.setOnClickListener {
@@ -59,7 +60,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this) }
+            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this) }
             backAlertDialog.show()
         }
 
@@ -80,23 +81,35 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         //функционирование кнопок выбора функций
         //поворот
         buttonTurn.setOnClickListener {
+            //получение изображения с ImageView
+            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            //передача изображения в другое активити
+            val uriCurrentBitmap = bitmapToFile(bitmap)
             val intentTurn = Intent(this, FunTurnActivity::class.java)
-            intentTurn.putExtra("imagePath", fileUri.toString())
-            intentTurn.putExtra("pathToOriginal", pathToOriginal.toString())
+            intentTurn.putExtra("imagePath", uriCurrentBitmap)
+            intentTurn.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentTurn)
         }
         //маскирование
         buttonMasking.setOnClickListener {
+            //получение изображения с ImageView
+            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            //передача изображения в другое активити
+            val uriCurrentBitmap = bitmapToFile(bitmap)
             val intentMasking = Intent(this, FunMaskingActivity::class.java)
-            intentMasking.putExtra("imagePath", fileUri.toString())
-            intentMasking.putExtra("pathToOriginal", pathToOriginal.toString())
+            intentMasking.putExtra("imagePath", uriCurrentBitmap)
+            intentMasking.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentMasking)
         }
         //масштабирование
         buttonScale.setOnClickListener {
+            //получение изображения с ImageView
+            val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+            //передача изображения в другое активити
+            val uriCurrentBitmap = bitmapToFile(bitmap)
             val intentScale = Intent(this, FunScaleActivity::class.java)
-            intentScale.putExtra("imagePath", fileUri.toString())
-            intentScale.putExtra("pathToOriginal", pathToOriginal.toString())
+            intentScale.putExtra("imagePath", uriCurrentBitmap)
+            intentScale.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentScale)
         }
 
@@ -123,12 +136,18 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         textCancel.setOnClickListener {
             imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
             println((application as IntermediateResults).functionCalls)
+                    val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
+                    backAlertDialog.setIcon(R.drawable.ic_save)
+                    backAlertDialog.setTitle("Сохранение")
+                    backAlertDialog.setMessage("Фотография успешно сохранена")
+                    backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoSecondScreenActivity) }
+                    backAlertDialog.show()
+
+                    progressBar.visibility = GONE
+                }
+            }
         }
 
-        buttonUndo.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
-            println((application as IntermediateResults).functionCalls)
-        }
     }
 
     //функция для получения Uri из Bitmap

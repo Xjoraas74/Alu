@@ -18,7 +18,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import kotlin.math.*
 
-
 class IntermediateResults : Application() {
     // for undo
     val bitmapsList = mutableListOf<Bitmap>()
@@ -270,17 +269,13 @@ class IntermediateResults : Application() {
             for (j in 0 until new.width) {
                 x = j - iCentreX
                 y = iCentreY - i
-
                 fDistance = sqrt((x * x + y * y).toDouble())
                 fPolarAngle = atan2(y.toDouble(), x.toDouble())
                 fPolarAngle += a
-
                 fTrueX = fDistance * cos(fPolarAngle)
                 fTrueY = fDistance * sin(fPolarAngle)
-
                 fTrueX = fTrueX + iCentreX
                 fTrueY = iCentreY - fTrueY
-
                 iFloorX = floor(fTrueX).toInt()
                 iFloorY = floor(fTrueY).toInt()
                 iCeilingX = ceil(fTrueX).toInt()
@@ -289,31 +284,25 @@ class IntermediateResults : Application() {
                     pixelsNew[i * new.width + j] = Color.WHITE
                     continue
                 }
-
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY
-
                 // indices in pixelsOrig:
                 clrTopLeft = iFloorY * orig.width + iFloorX
                 clrTopRight = iFloorY * orig.width + iCeilingX
                 clrBottomLeft = iCeilingY * orig.width + iFloorX
                 clrBottomRight = iCeilingY * orig.width + iCeilingX
-
                 // linearly interpolate horizontally between top neighbours
                 fTopRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrTopLeft]) + fDeltaX * Color.red(pixelsOrig[clrTopRight])
                 fTopGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrTopLeft]) + fDeltaX * Color.green(pixelsOrig[clrTopRight])
                 fTopBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrTopLeft]) + fDeltaX * Color.blue(pixelsOrig[clrTopRight])
-
                 // linearly interpolate horizontally between bottom neighbours
                 fBottomRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.red(pixelsOrig[clrBottomRight])
                 fBottomGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.green(pixelsOrig[clrBottomRight])
                 fBottomBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.blue(pixelsOrig[clrBottomRight])
-
                 // linearly interpolate vertically between top and bottom interpolated results
                 iRed = ((1 - fDeltaY) * fTopRed + fDeltaY * fBottomRed).roundToInt()
                 iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
                 iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
-
                 pixelsNew[i * new.width + j] = Color.rgb(iRed, iGreen, iBlue)
             }
         }*/
@@ -461,7 +450,6 @@ class IntermediateResults : Application() {
         }
     }
 
-    //функция масштабирования полученного изображения
     fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<FunScaleActivity.Mipmap>): Bitmap {
         if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
             val new = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -569,8 +557,6 @@ class IntermediateResults : Application() {
         }
     }
 
-    //цветокоррекция и цветовые фильтры
-    //фильтр "негатив"
     fun negativeFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -606,7 +592,6 @@ class IntermediateResults : Application() {
         }
     }
 
-    //фильтр "сепия"
     fun sepiaFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -637,7 +622,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //чёрно-белый с оттенками серого
     fun grayScaleFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -655,7 +639,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //чёрно-белый фильтр
     fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -676,7 +659,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //цветной фильтр
     fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)

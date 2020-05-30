@@ -10,6 +10,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/first_screen" >
 
+    //cameraButton
     <ImageButton
         android:id="@+id/buttonCamera"
         android:layout_width="100dp"
@@ -26,6 +27,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.833" />
 
+    //galleryButton
     <ImageButton
         android:id="@+id/buttonLibrary"
         android:layout_width="100dp"
@@ -42,21 +44,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.833" />
 
-    <ImageButton
-        android:id="@+id/buttonGame"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/btn_rounded"
-        android:src="@drawable/ic_3d_cube"
-        android:textColor="@color/colorPurple"
-        android:translationZ="10dp"
-        android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.052" />
+    //gameButton
+<!--    <ImageButton-->
+<!--        android:id="@+id/buttonGame"-->
+<!--        android:layout_width="60dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:background="@drawable/btn_rounded"-->
+<!--        android:src="@drawable/ic_3d_cube"-->
+<!--        android:textColor="@color/colorPurple"-->
+<!--        android:translationZ="10dp"-->
+<!--        android:elevation="10dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.052" />-->
 
+    //textCamera
     <TextView
         android:id="@+id/textCamera"
         android:layout_width="wrap_content"
@@ -75,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonCamera"
         app:layout_constraintVertical_bias="0.085" />
 
+    //textGallery
     <TextView
         android:id="@+id/textLibrary"
         android:layout_width="wrap_content"

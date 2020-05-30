@@ -19,12 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FunTurnArbitraryAngleActivity" />
         <activity android:name=".FunScaleActivity" />
         <activity android:name=".FunMaskingActivity" />
-        <activity android:name=".FunTurn90DegreesActivity" />
-        <activity android:name=".FunTurnArbitraryAngle" />
-        <activity android:name=".TestEditPhotoActivity" />
         <activity android:name=".FunTurnActivity" />
         <activity android:name=".EditPhotoSecondScreenActivity" />
         <activity android:name=".EditPhotoActivity" />
@@ -38,5 +34,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

@@ -7,9 +7,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -20,16 +21,11 @@ import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
-import kotlinx.android.synthetic.main.activity_edit_photo.buttonUndo
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
-import kotlinx.android.synthetic.main.activity_edit_photo.textCancel
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EditPhotoActivity : AppCompatActivity() {
@@ -61,7 +57,7 @@ class EditPhotoActivity : AppCompatActivity() {
         imageToEdit.setImageBitmap(bmpEditImage)
 
         //скрытие progress bar'а
-        progressBar.visibility = View.GONE
+        progressBar.visibility = GONE
 
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(
@@ -168,8 +164,10 @@ class EditPhotoActivity : AppCompatActivity() {
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            i.putExtra("pathToOriginal", pathToOriginal.toString())
+
+            i.putExtra("imagePath", uriCurrentBitmap)
+            i.putExtra("pathToOriginal", pathToOriginal)
+
             println(uriCurrentBitmap)
             println(pathToOriginal)
             startActivity(i)
@@ -209,10 +207,9 @@ class EditPhotoActivity : AppCompatActivity() {
 
         textCancel.setOnClickListener {
             imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
-        }
-
-        buttonUndo.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
+                    progressBar.visibility = GONE
+                }
+            }
         }
 
     }

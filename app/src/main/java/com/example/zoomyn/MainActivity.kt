@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 
-
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -21,17 +20,18 @@ class MainActivity : AppCompatActivity() {
         private const val IMAGE_PICK_CODE = 1000
         //код разрешения
         private const val PERMISSION_CODE = 1001
-        //код взятия избражения из камеры
+        //код взятия изображения из камеры
         private const val IMAGE_CAPTURE_CODE = 1002
     }
 
-    var image_uri: Uri? = null
+    var imageUri: Uri? = null
     var flagCamera: Boolean = false
     var flagGallery: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //тема для Splash-screen
         setTheme(R.style.AppTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -77,11 +77,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonGame.setOnClickListener {
-            Intent(this, TestEditPhotoActivity::class.java).apply {
-                startActivity(this)
-            }
-        }
+//        buttonGame.setOnClickListener {
+//            Intent(this, TestEditPhotoActivity::class.java).apply {
+//                startActivity(this)
+//            }
+//        }
     }
 
     private fun pickImageFromGallery() {
@@ -95,9 +95,9 @@ class MainActivity : AppCompatActivity() {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "New Picture")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
-        image_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
     }
 
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                    if (flagCamera) {
                        openCamera()
                    }
-                    else {
+                    else if (flagGallery) {
                        pickImageFromGallery()
                    }
                 }
@@ -125,11 +125,13 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         //передача изображения из камеры
         if (resultCode == Activity.RESULT_OK) {
-            if (image_uri != null) {
+            if (imageUri != null) {
                 val intent = Intent(this, EditPhotoActivity::class.java)
-                intent.putExtra("imagePath", image_uri)
-                intent.putExtra("pathToOriginal", image_uri)
-                println(image_uri)
+                intent.putExtra("imagePath", imageUri)
+                intent.putExtra("pathToOriginal", imageUri)
+
+                println(imageUri)
+
                 startActivity(intent)
             }
         }

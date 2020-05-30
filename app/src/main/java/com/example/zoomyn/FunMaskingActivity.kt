@@ -24,27 +24,29 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class FunMaskingActivity : AppCompatActivity() {
+
     var amount = 0
     var radius = 0
     var threshold = 0
     var ratioToOriginal = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fun_masking)
 
-        //извлечение изображения из предыдущей активити c примененными фильтрами
-        val intent = intent
-        val imagePath = intent.getStringExtra("imagePath")
-        val fileUri = Uri.parse(imagePath)
-        val pathToOriginal = Uri.parse(intent.getStringExtra("pathToOriginal"))
+        //получение фотографии
+        val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
 
         //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+        val cancelBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
         //функционирование seekBar'а для радиуса
         seekBarMaskingRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -86,7 +88,7 @@ class FunMaskingActivity : AppCompatActivity() {
         seekBarMaskingAmount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                progressSeekBarMaskingAmount.text = "$i %"
+                progressSeekBarMaskingAmount.text = "$i%"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -102,25 +104,27 @@ class FunMaskingActivity : AppCompatActivity() {
 
         //функционирование кнопок нижнего меню
         buttonCancel.setOnClickListener {
-            val uriCurrentBitmap = bitmapToFile(currentBitmap)
-            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
+            //передача изображения в другое активити
+            val uriCurrentBitmap = bitmapToFile(cancelBitmap)
+            val intentCancel = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            intentCancel.putExtra("imagePath", uriCurrentBitmap)
+            intentCancel.putExtra("pathToOriginal", pathToOriginal)
+            startActivity(intentCancel)
         }
 
         buttonDone.setOnClickListener {
             currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
-            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            i.putExtra("pathToOriginal", pathToOriginal.toString())
+            val intentDone = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            intentDone.putExtra("imagePath", uriCurrentBitmap)
+            intentDone.putExtra("pathToOriginal", pathToOriginal)
             (application as IntermediateResults).functionCalls.addAll(
                 listOf(9.0, amount.toDouble(), (radius / ratioToOriginal).roundToInt().toDouble(), threshold.toDouble())
             )
-            startActivity(i)
+            startActivity(intentDone)
         }
-
         ratioToOriginal = findRatio(pathToOriginal, this, (imageToEdit.drawable as BitmapDrawable).bitmap.height)
+
     }
 
     //функция для получения Uri из Bitmap
