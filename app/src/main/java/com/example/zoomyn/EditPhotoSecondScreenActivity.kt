@@ -20,10 +20,8 @@ import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonFilter
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonSave
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonUndo
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.progressBar
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.textCancel
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -71,10 +69,8 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
             val intentFilter = Intent(this, EditPhotoActivity::class.java)
-            intentFilter.putExtra("imagePath", uriCurrentBitmap.toString())
-            intentFilter.putExtra("pathToOriginal", pathToOriginal.toString())
-            println(uriCurrentBitmap)
-            println(pathToOriginal)
+            intentFilter.putExtra("imagePath", uriCurrentBitmap)
+            intentFilter.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentFilter)
         }
 
@@ -121,21 +117,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
                 launch(Dispatchers.Main) {
                     println("launch 2")
 
-                    val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
-                    backAlertDialog.setIcon(R.drawable.ic_save)
-                    backAlertDialog.setTitle("Сохранение")
-                    backAlertDialog.setMessage("Фотография успешно сохранена")
-                    backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoSecondScreenActivity) }
-                    backAlertDialog.show()
-
-                    progressBar.visibility = GONE
-                }
-            }
-        }
-
-        textCancel.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
-            println((application as IntermediateResults).functionCalls)
                     val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
                     backAlertDialog.setIcon(R.drawable.ic_save)
                     backAlertDialog.setTitle("Сохранение")

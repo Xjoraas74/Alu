@@ -43,6 +43,7 @@ class FunTurnActivity : AppCompatActivity() {
         buttonRotate90.setOnClickListener {
             currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             imageToEdit.setImageBitmap((application as IntermediateResults).callRotate90DegreesClockwise(currentBitmap))
+            currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             count++
         }
 

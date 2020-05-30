@@ -112,6 +112,7 @@
         android:layout_marginLeft="120dp"
         android:layout_marginEnd="30dp"
         android:layout_marginRight="30dp"
+        android:max="90"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

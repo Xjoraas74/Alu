@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
@@ -152,7 +153,6 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonEdit.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-            (application as IntermediateResults).bitmapsList.add(bitmap)
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -174,8 +174,6 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonSave.setOnClickListener {
-            progressBar.visibility = VISIBLE
-
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -185,7 +183,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
 
-            println("onClickListener")
+            progressBar.visibility = VISIBLE
             CoroutineScope(Dispatchers.Default).launch {
                 (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
                 println("launch 1")
@@ -199,14 +197,6 @@ class EditPhotoActivity : AppCompatActivity() {
                     backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoActivity) }
                     backAlertDialog.show()
 
-                    progressBar.visibility = GONE
-                }
-            }
-        }
-
-
-        textCancel.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
                     progressBar.visibility = GONE
                 }
             }
