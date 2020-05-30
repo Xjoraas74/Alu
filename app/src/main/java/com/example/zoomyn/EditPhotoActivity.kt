@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -174,6 +176,8 @@ class EditPhotoActivity : AppCompatActivity() {
         }
 
         buttonSave.setOnClickListener {
+            progressBar.visibility = VISIBLE
+
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -183,16 +187,25 @@ class EditPhotoActivity : AppCompatActivity() {
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
 
-            runBlocking {
-                CoroutineScope(Dispatchers.Default).launch {
-                    (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
+            println("onClickListener")
+            CoroutineScope(Dispatchers.Default).launch {
+                (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
+                println("launch 1")
+                launch(Dispatchers.Main) {
+                    println("launch 2")
+
+                    val backAlertDialog = AlertDialog.Builder(this@EditPhotoActivity)
+                    backAlertDialog.setIcon(R.drawable.ic_save)
+                    backAlertDialog.setTitle("Сохранение")
+                    backAlertDialog.setMessage("Фотография успешно сохранена")
+                    backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoActivity) }
+                    backAlertDialog.show()
+
+                    progressBar.visibility = GONE
                 }
-
-                //progress bar
-
-                //finish activity
             }
         }
+
 
         textCancel.setOnClickListener {
             imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))

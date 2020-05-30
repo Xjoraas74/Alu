@@ -15,7 +15,15 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
+import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonBack
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonFilter
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonSave
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonUndo
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.progressBar
+import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.textCancel
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -51,8 +59,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this)
-            }
+            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this) }
             backAlertDialog.show()
         }
 
@@ -94,27 +101,22 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         }
 
         buttonSave.setOnClickListener {
-            runBlocking {
-                val saving = CoroutineScope(Dispatchers.Default).async {
-                    (application as IntermediateResults).save(pathToOriginal, this@EditPhotoSecondScreenActivity)
+            progressBar.visibility = VISIBLE
+            CoroutineScope(Dispatchers.Default).launch {
+                (application as IntermediateResults).save(pathToOriginal, this@EditPhotoSecondScreenActivity)
+                println("launch 1")
+                launch(Dispatchers.Main) {
+                    println("launch 2")
+
+                    val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
+                    backAlertDialog.setIcon(R.drawable.ic_save)
+                    backAlertDialog.setTitle("Сохранение")
+                    backAlertDialog.setMessage("Фотография успешно сохранена")
+                    backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoSecondScreenActivity) }
+                    backAlertDialog.show()
+
+                    progressBar.visibility = GONE
                 }
-
-                //progress bar
-                progressBar.visibility = View.VISIBLE
-                println("shown")
-
-                //await finish saving, close progress bar, finish activity
-                saving.await()
-                progressBar.visibility = View.GONE
-                println("gone")
-                val backAlertDialog = AlertDialog.Builder(this@EditPhotoSecondScreenActivity)
-                backAlertDialog.setIcon(R.drawable.ic_save)
-                backAlertDialog.setTitle("Выход")
-                backAlertDialog.setMessage("Фотография успешно сохранена")
-                backAlertDialog.setPositiveButton("Закрыть") { _, _ -> }
-                backAlertDialog.show()
-                Thread.sleep(1000)
-                progressBar.visibility = View.GONE
             }
         }
 
