@@ -9,7 +9,8 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -17,10 +18,8 @@ import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
-import kotlinx.android.synthetic.main.activity_edit_photo.buttonUndo
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
-import kotlinx.android.synthetic.main.activity_edit_photo.textCancel
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
@@ -52,12 +51,13 @@ class EditPhotoActivity : AppCompatActivity() {
 
         //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
         val bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
+
         println("${bmpEditImage?.width} ${bmpEditImage?.height}")
 
         imageToEdit.setImageBitmap(bmpEditImage)
 
         //скрытие progress bar'а
-        progressBar.visibility = View.GONE
+        progressBar.visibility = GONE
 
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(
@@ -152,9 +152,7 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonEdit.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-
             (application as IntermediateResults).bitmapsList.add(bitmap)
-
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -163,11 +161,10 @@ class EditPhotoActivity : AppCompatActivity() {
                 4 -> (application as IntermediateResults).functionCalls.add(4.0)
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
-
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
-
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
+
             i.putExtra("imagePath", uriCurrentBitmap)
             i.putExtra("pathToOriginal", pathToOriginal)
 
@@ -177,8 +174,10 @@ class EditPhotoActivity : AppCompatActivity() {
             startActivity(i)
         }
 
-        //функционирование кнопки "Save"
+        //функционирование кноки "Save"
         buttonSave.setOnClickListener {
+            progressBar.visibility = VISIBLE
+
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -188,24 +187,23 @@ class EditPhotoActivity : AppCompatActivity() {
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
 
-            runBlocking {
-                CoroutineScope(Dispatchers.Default).launch {
-                    (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
+            println("onClickListener")
+            CoroutineScope(Dispatchers.Default).launch {
+                (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
+                println("launch 1")
+                launch(Dispatchers.Main) {
+                    println("launch 2")
+
+                    val backAlertDialog = AlertDialog.Builder(this@EditPhotoActivity)
+                    backAlertDialog.setIcon(R.drawable.ic_save)
+                    backAlertDialog.setTitle("Сохранение")
+                    backAlertDialog.setMessage("Фотография успешно сохранена")
+                    backAlertDialog.setPositiveButton("Закрыть") { _, _ -> ProcessPhoenix.triggerRebirth(this@EditPhotoActivity) }
+                    backAlertDialog.show()
+
+                    progressBar.visibility = GONE
                 }
-
-                //progress bar
-
-                //finish activity
             }
-        }
-
-        //функционирование кнопки "Undo"
-        textCancel.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
-        }
-
-        buttonUndo.setOnClickListener {
-            imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
         }
 
     }
@@ -267,4 +265,5 @@ class EditPhotoActivity : AppCompatActivity() {
         }
         return bitmap
     }
+
 }

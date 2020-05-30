@@ -143,7 +143,6 @@ class FunMaskingActivity : AppCompatActivity() {
             e.printStackTrace()
         }
         return Uri.parse(file.absolutePath)
-
     }
 
     private fun findRatio(uri: Uri, context: Context, heightShown: Int): Double {
