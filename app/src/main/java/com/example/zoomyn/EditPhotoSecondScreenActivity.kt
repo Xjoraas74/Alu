@@ -1,8 +1,10 @@
 package com.example.zoomyn
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -50,8 +52,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this)
-            }
+            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this) }
             backAlertDialog.show()
         }
 
@@ -59,7 +60,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         buttonFilter.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
-
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
 
@@ -67,7 +67,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
 
             intentFilter.putExtra("imagePath", uriCurrentBitmap)
             intentFilter.putExtra("pathToOriginal", pathToOriginal)
-
             startActivity(intentFilter)
         }
 
@@ -83,7 +82,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             intentTurn.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentTurn)
         }
-
         //маскирование
         buttonMasking.setOnClickListener {
             //получение изображения с ImageView
@@ -95,7 +93,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             intentMasking.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentMasking)
         }
-
         //масштабирование
         buttonScale.setOnClickListener {
             //получение изображения с ImageView
@@ -108,7 +105,6 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             startActivity(intentScale)
         }
 
-        //функционирование кнопки "Save"
         buttonSave.setOnClickListener {
             progressBar.visibility = VISIBLE
             CoroutineScope(Dispatchers.Default).launch {
