@@ -4,30 +4,20 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Bitmap.createBitmap
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.SeekBar
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
 import kotlinx.android.synthetic.main.activity_fun_scale.*
-import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.*
-import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.buttonCancel
-import kotlinx.android.synthetic.main.activity_fun_turn_arbitrary_angle.buttonDone
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.lang.Math.ceil
-import java.lang.Math.floor
 import java.util.*
-import kotlin.math.max
-import kotlin.math.roundToInt
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class FunScaleActivity : AppCompatActivity() {
 
     class Mipmap {
@@ -44,30 +34,32 @@ class FunScaleActivity : AppCompatActivity() {
 
     private val mipmaps = mutableListOf<Mipmap>()
 
+    var scale = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fun_scale)
 
-        //извлечение изображения из предыдущей активити c примененными фильтрами
-        val intent = intent
-        val imagePath = intent.getStringExtra("imagePath")
-        val fileUri = Uri.parse(imagePath)
+        //получение фотографии
+        val fileUri: Uri = intent.getParcelableExtra("imagePath")
+        val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
 
         //показ полученной фотографии на экран
         imageToEdit.setImageURI(fileUri)
 
         //преобразование полученного изображения в Bitmap
         var currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+        val cancelBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
 
         //функционирование seekBar'а
         seekBarScale.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                textSeekBarScale.text = "Увеличить в $i " +
-                when (i) {
-                    2, 3, 4 -> "раза"
-                    else -> "раз"
-                }
+                textSeekBarScale.text = "Увеличить в ${i.toDouble() / 10} " +
+                        when (i) {
+                            10 -> "раз"
+                            else -> "раза"
+                        }
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -75,8 +67,8 @@ class FunScaleActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 if (currentBitmap != null) {
-                    val value = seekBarScale.progress.toDouble()
-                    imageToEdit.setImageBitmap((application as IntermediateResults).scale(currentBitmap, value, mipmaps))
+                    scale = seekBarScale.progress.toDouble() / 10
+                    imageToEdit.setImageBitmap((application as IntermediateResults).scale(currentBitmap, scale, mipmaps))
                 }
             }
         })
@@ -84,21 +76,25 @@ class FunScaleActivity : AppCompatActivity() {
         //функционирование кнопко нижнего меню
         buttonCancel.setOnClickListener {
             //передача изображения в другое активити
-            val uriCurrentBitmap = bitmapToFile(currentBitmap)
-            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
+            val uriCurrentBitmap = bitmapToFile(cancelBitmap)
+            val intentCancel = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            intentCancel.putExtra("imagePath", uriCurrentBitmap)
+            intentCancel.putExtra("pathToOriginal", pathToOriginal)
+            startActivity(intentCancel)
         }
 
         buttonDone.setOnClickListener {
             currentBitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
             val uriCurrentBitmap = bitmapToFile(currentBitmap)
-            val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
-            i.putExtra("imagePath", uriCurrentBitmap.toString())
-            startActivity(i)
+            val intentDone = Intent(this, EditPhotoSecondScreenActivity::class.java)
+            intentDone.putExtra("imagePath", uriCurrentBitmap)
+            intentDone.putExtra("pathToOriginal", pathToOriginal)
+            (application as IntermediateResults).functionCalls.addAll(listOf(6.0, scale))
+            startActivity(intentDone)
         }
 
         (application as IntermediateResults).createMipmaps(mipmaps, currentBitmap)
+
     }
 
     //функция для получения Uri из Bitmap
@@ -110,7 +106,7 @@ class FunScaleActivity : AppCompatActivity() {
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {

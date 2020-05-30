@@ -39,4 +39,6 @@
     <string name="amount">Эффект:</string>
     <string name="parametersForEdit">Выберите параметры редактирования</string>
     <string name="headerScale">Масштабирование</string>
+    <string name="textModeTurn">Выберите режим поворота изображения</string>
+    <string name="textModeScale">Выберите режим масштабирования</string>
 </resources>

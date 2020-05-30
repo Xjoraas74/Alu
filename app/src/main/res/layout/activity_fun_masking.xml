@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    //textHeaderMasking
     <TextView
         android:id="@+id/textHeaderMasking"
         android:layout_width="wrap_content"
@@ -23,19 +24,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    //imageToEdit
+
     <ImageView
         android:id="@+id/imageToEdit"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="68dp"
         android:layout_marginBottom="30dp"
         android:src="@drawable/ic_edit_image"
         app:layout_constraintBottom_toTopOf="@+id/seekBarMaskingThreshold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.56" />
 
+    //seekBarMaskingRadius
     <SeekBar
         android:id="@+id/seekBarMaskingRadius"
         android:layout_width="match_parent"
@@ -47,25 +52,31 @@
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
         android:layout_marginBottom="25dp"
-        android:max="100"
+        android:max="50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.92" />
 
+    //progressSeekBarMaskingRadius
+
     <TextView
         android:id="@+id/progressSeekBarMaskingRadius"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.58"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toEndOf="@+id/headerSeekBarRadius"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.90999997" />
 
+    //seekBarMaskingThreshold
     <SeekBar
         android:id="@+id/seekBarMaskingThreshold"
         android:layout_width="match_parent"
@@ -85,18 +96,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.78" />
 
+    //progressSeekBarMaskingThreshold
+
     <TextView
         android:id="@+id/progressSeekBarMaskingThreshold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="14dp"
+        android:layout_marginLeft="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.58"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toEndOf="@+id/headerSeekBarThreshold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.78" />
 
+    //seekBarMaskingAmount
     <SeekBar
         android:id="@+id/seekBarMaskingAmount"
         android:layout_width="match_parent"
@@ -116,18 +133,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
 
+    //progressSeekBarMaskingAmount
+
     <TextView
         android:id="@+id/progressSeekBarMaskingAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.58"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toEndOf="@+id/headerSeekBarAmount"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
 
+    //headerSeekBarRadius
     <TextView
         android:id="@+id/headerSeekBarRadius"
         android:layout_width="wrap_content"
@@ -141,6 +164,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.90999997" />
 
+    //headerSeekBarThreshold
     <TextView
         android:id="@+id/headerSeekBarThreshold"
         android:layout_width="wrap_content"
@@ -154,6 +178,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.78" />
 
+    //headerSeekBarAmount
     <TextView
         android:id="@+id/headerSeekBarAmount"
         android:layout_width="wrap_content"
@@ -167,6 +192,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.85" />
 
+    //buttonCancel
     <Button
         android:id="@+id/buttonCancel"
         android:layout_width="wrap_content"
@@ -185,6 +211,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992" />
 
+    //buttonDone
     <Button
         android:id="@+id/buttonDone"
         android:layout_width="wrap_content"

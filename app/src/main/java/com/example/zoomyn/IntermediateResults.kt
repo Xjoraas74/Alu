@@ -1,10 +1,8 @@
 package com.example.zoomyn
 
-import android.app.Activity
 import android.app.Application
 import android.content.ContentValues
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -17,11 +15,8 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.File.separator
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.OutputStream
-import java.util.*
 import kotlin.math.*
-
 
 class IntermediateResults : Application() {
     // for undo
@@ -53,13 +48,16 @@ class IntermediateResults : Application() {
             }
             val fileName = System.currentTimeMillis().toString() + ".png"
             val file = File(directory, fileName)
+            println("BEFORE SAVING")
             saveImageToStream(bitmap, FileOutputStream(file))
+            println("SAVED")
             if (file.absolutePath != null) {
                 val values = contentValues()
                 values.put(MediaStore.Images.Media.DATA, file.absolutePath)
                 // .DATA is deprecated in API 29
                 context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             }
+            println("ADDED CONTENT VALUES")
         }
     }
 
@@ -74,7 +72,7 @@ class IntermediateResults : Application() {
     private fun saveImageToStream(bitmap: Bitmap, outputStream: OutputStream?) {
         if (outputStream != null) {
             try {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                 outputStream.close()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -83,7 +81,8 @@ class IntermediateResults : Application() {
     }
 
     fun save(uri: Uri, context: Context) {
-        println("STARTED SAVING")
+        println("STARTED EDITING")
+        val tStart = System.currentTimeMillis()
         var code: Double
         val resultList = mutableListOf<Bitmap>()
         resultList.add(
@@ -113,7 +112,7 @@ class IntermediateResults : Application() {
                     }
                     resultList.add(scale(resultList[0], factor, mipmaps))
                 }
-                7.0 -> resultList.add(rotate90DegreesClockwise(resultList[0]))
+                7.0 -> resultList.add(callRotate90DegreesClockwise(resultList[0]))
                 8.0 -> {
                     val angle = functionCalls[0].toInt()
                     functionCalls.removeAt(0)
@@ -133,8 +132,10 @@ class IntermediateResults : Application() {
             resultList.removeAt(0)
         }
 
+        val tEnd = System.currentTimeMillis()
+        println("EDITED, took ${(tEnd - tStart).toDouble() / 1000}")
         saveImage(resultList[0], context, "Zoomyn")
-        println("SUCCESSFULLY SAVED")
+        println("ALL DONE")
         bitmapsList.removeAll(bitmapsList)
     }
 
@@ -172,14 +173,7 @@ class IntermediateResults : Application() {
         return bitmapToUndo
     }
 
-    fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
-        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
-        val a = aDeg * PI / 180
-        val iCentreX = new.width / 2
-        val iCentreY = new.height / 2
-        val pixelsOrig = IntArray(orig.width * orig.height)
-        val pixelsNew = IntArray(new.width * new.height)
-
+    private fun _rotateClockwiseByDegrees(iCentreX: Int, iCentreY: Int, a: Double, nw: Int, ow: Int, pixelsOrig: IntArray, pixelsNew: IntArray, oh: Int, iMin: Int, iMax: Int) {
         var x: Int
         var y: Int
         var fDistance: Double
@@ -206,9 +200,8 @@ class IntermediateResults : Application() {
         var iGreen: Int
         var iBlue: Int
 
-        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
+        for (i in iMin..iMax) {
+            for (j in 0 until nw) {
                 x = j - iCentreX
                 y = iCentreY - i
 
@@ -226,8 +219,8 @@ class IntermediateResults : Application() {
                 iFloorY = floor(fTrueY).toInt()
                 iCeilingX = ceil(fTrueX).toInt()
                 iCeilingY = ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) {
-                    pixelsNew[i * new.width + j] = Color.WHITE
+                if (iFloorX < 0 || iCeilingX >= ow || iFloorY < 0 || iCeilingY >= oh) {
+                    pixelsNew[i * nw + j] = Color.WHITE
                     continue
                 }
 
@@ -235,10 +228,10 @@ class IntermediateResults : Application() {
                 fDeltaY = fTrueY - iFloorY
 
                 // indices in pixelsOrig:
-                clrTopLeft = iFloorY * orig.width + iFloorX
-                clrTopRight = iFloorY * orig.width + iCeilingX
-                clrBottomLeft = iCeilingY * orig.width + iFloorX
-                clrBottomRight = iCeilingY * orig.width + iCeilingX
+                clrTopLeft = iFloorY * ow + iFloorX
+                clrTopRight = iFloorY * ow + iCeilingX
+                clrBottomLeft = iCeilingY * ow + iFloorX
+                clrBottomRight = iCeilingY * ow + iCeilingX
 
                 // linearly interpolate horizontally between top neighbours
                 fTopRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrTopLeft]) + fDeltaX * Color.red(pixelsOrig[clrTopRight])
@@ -255,7 +248,83 @@ class IntermediateResults : Application() {
                 iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
                 iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
 
+                pixelsNew[i * nw + j] = Color.rgb(iRed, iGreen, iBlue)
+            }
+        }
+    }
+
+    fun rotateClockwiseByDegrees(orig: Bitmap, aDeg: Int): Bitmap {
+        val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
+        val a = aDeg * PI / 180
+        val iCentreX = new.width / 2
+        val iCentreY = new.height / 2
+        val pixelsOrig = IntArray(orig.width * orig.height)
+        val pixelsNew = IntArray(new.width * new.height)
+
+        var x: Int
+        var y: Int
+
+        orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
+        /*for (i in 0 until new.height) {
+            for (j in 0 until new.width) {
+                x = j - iCentreX
+                y = iCentreY - i
+                fDistance = sqrt((x * x + y * y).toDouble())
+                fPolarAngle = atan2(y.toDouble(), x.toDouble())
+                fPolarAngle += a
+                fTrueX = fDistance * cos(fPolarAngle)
+                fTrueY = fDistance * sin(fPolarAngle)
+                fTrueX = fTrueX + iCentreX
+                fTrueY = iCentreY - fTrueY
+                iFloorX = floor(fTrueX).toInt()
+                iFloorY = floor(fTrueY).toInt()
+                iCeilingX = ceil(fTrueX).toInt()
+                iCeilingY = ceil(fTrueY).toInt()
+                if (iFloorX < 0 || iCeilingX >= orig.width || iFloorY < 0 || iCeilingY >= orig.height) {
+                    pixelsNew[i * new.width + j] = Color.WHITE
+                    continue
+                }
+                fDeltaX = fTrueX - iFloorX
+                fDeltaY = fTrueY - iFloorY
+                // indices in pixelsOrig:
+                clrTopLeft = iFloorY * orig.width + iFloorX
+                clrTopRight = iFloorY * orig.width + iCeilingX
+                clrBottomLeft = iCeilingY * orig.width + iFloorX
+                clrBottomRight = iCeilingY * orig.width + iCeilingX
+                // linearly interpolate horizontally between top neighbours
+                fTopRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrTopLeft]) + fDeltaX * Color.red(pixelsOrig[clrTopRight])
+                fTopGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrTopLeft]) + fDeltaX * Color.green(pixelsOrig[clrTopRight])
+                fTopBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrTopLeft]) + fDeltaX * Color.blue(pixelsOrig[clrTopRight])
+                // linearly interpolate horizontally between bottom neighbours
+                fBottomRed = (1 - fDeltaX) * Color.red(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.red(pixelsOrig[clrBottomRight])
+                fBottomGreen = (1 - fDeltaX) * Color.green(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.green(pixelsOrig[clrBottomRight])
+                fBottomBlue = (1 - fDeltaX) * Color.blue(pixelsOrig[clrBottomLeft]) + fDeltaX * Color.blue(pixelsOrig[clrBottomRight])
+                // linearly interpolate vertically between top and bottom interpolated results
+                iRed = ((1 - fDeltaY) * fTopRed + fDeltaY * fBottomRed).roundToInt()
+                iGreen = ((1 - fDeltaY) * fTopGreen + fDeltaY * fBottomGreen).roundToInt()
+                iBlue = ((1 - fDeltaY) * fTopBlue + fDeltaY * fBottomBlue).roundToInt()
                 pixelsNew[i * new.width + j] = Color.rgb(iRed, iGreen, iBlue)
+            }
+        }*/
+        runBlocking {
+            coroutineScope {
+                val n = 1275 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        _rotateClockwiseByDegrees(
+                            iCentreX,
+                            iCentreY,
+                            a,
+                            new.width,
+                            orig.width,
+                            pixelsOrig,
+                            pixelsNew,
+                            orig.height,
+                            it * new.height / n,
+                            if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 }
+                        )
+                    }
+                }.awaitAll()
             }
         }
 
@@ -263,11 +332,7 @@ class IntermediateResults : Application() {
         return new
     }
 
-    private fun getPixelsBilinearlyScaled(orig: IntArray, scaleFactor: Double, origWidth: Int, origHeight: Int): IntArray {
-        val nw = (origWidth * scaleFactor).roundToInt()
-        val nh = (origHeight * scaleFactor).roundToInt()
-        val pixelsNew = IntArray(nw * nh)
-
+    private fun _getPixelsBilinearlyScaled(iMin: Int, iMax: Int, nw: Int, scaleFactor: Double, ow: Int, oh: Int, orig: IntArray, pixelsNew: IntArray) {
         var iFloorX: Int
         var iCeilingX: Int
         var iFloorY: Int
@@ -290,25 +355,25 @@ class IntermediateResults : Application() {
         var iGreen: Int
         var iBlue: Int
 
-        for (i in 0 until nh) {
+        for (i in iMin..iMax) {
             for (j in 0 until nw) {
                 fTrueX = j / scaleFactor
                 fTrueY = i / scaleFactor
 
-                iFloorX = kotlin.math.floor(fTrueX).toInt()
-                iFloorY = kotlin.math.floor(fTrueY).toInt()
-                iCeilingX = kotlin.math.ceil(fTrueX).toInt()
-                iCeilingY = kotlin.math.ceil(fTrueY).toInt()
-                if (iFloorX < 0 || iCeilingX >= origWidth || iFloorY < 0 || iCeilingY >= origHeight) continue
+                iFloorX = floor(fTrueX).toInt()
+                iFloorY = floor(fTrueY).toInt()
+                iCeilingX = ceil(fTrueX).toInt()
+                iCeilingY = ceil(fTrueY).toInt()
+                if (iFloorX < 0 || iCeilingX >= ow || iFloorY < 0 || iCeilingY >= oh) continue
 
                 fDeltaX = fTrueX - iFloorX
                 fDeltaY = fTrueY - iFloorY
 
                 // indices in pixelsOrig:
-                clrTopLeft = iFloorY * origWidth + iFloorX
-                clrTopRight = iFloorY * origWidth + iCeilingX
-                clrBottomLeft = iCeilingY * origWidth + iFloorX
-                clrBottomRight = iCeilingY * origWidth + iCeilingX
+                clrTopLeft = iFloorY * ow + iFloorX
+                clrTopRight = iFloorY * ow + iCeilingX
+                clrBottomLeft = iCeilingY * ow + iFloorX
+                clrBottomRight = iCeilingY * ow + iCeilingX
 
                 // linearly interpolate horizontally between top neighbours
                 fTopRed = (1 - fDeltaX) * Color.red(orig[clrTopLeft]) + fDeltaX * Color.red(orig[clrTopRight])
@@ -328,11 +393,63 @@ class IntermediateResults : Application() {
                 pixelsNew[i * nw + j] = Color.rgb(iRed, iGreen, iBlue)
             }
         }
+    }
+
+    private fun getPixelsBilinearlyScaled(orig: IntArray, scaleFactor: Double, origWidth: Int, origHeight: Int): IntArray {
+        val nw = (origWidth * scaleFactor).roundToInt()
+        val nh = (origHeight * scaleFactor).roundToInt()
+        val pixelsNew = IntArray(nw * nh)
+
+        runBlocking {
+            coroutineScope {
+                val n = 1275 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        _getPixelsBilinearlyScaled(
+                            it * nh / n,
+                            if (it != n - 1) { (it + 1) * nh / n - 1 } else { nh - 1 },
+                            nw,
+                            scaleFactor,
+                            origWidth,
+                            origHeight,
+                            orig,
+                            pixelsNew
+                        )
+                    }
+                }.awaitAll()
+            }
+        }
 
         return pixelsNew
     }
 
-    //функция масштабирования полученного изображения
+    private fun interpolateBetweenPixels(
+        iMin: Int,
+        iMax: Int,
+        nw: Int,
+        result: IntArray,
+        weightOfBigger: Double,
+        pixelsFromSmaller: IntArray,
+        pixelsFromBigger: IntArray,
+        widthDiffFromFromBigger: Int,
+        widthDiffFromFromSmaller: Int
+    ) {
+        for (i in iMin..iMax) {
+            for (j in 0 until nw) {
+                result[i * nw + j] = Color.rgb(
+                    (Color.red(pixelsFromSmaller[i * (nw + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                            + Color.red(pixelsFromBigger[i * (nw + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
+
+                    (Color.green(pixelsFromSmaller[i * (nw + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                            + Color.green(pixelsFromBigger[i * (nw + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
+
+                    (Color.blue(pixelsFromSmaller[i * (nw + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
+                            + Color.blue(pixelsFromBigger[i * (nw + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt()
+                )
+            }
+        }
+    }
+
     fun scale(orig: Bitmap, scaleFactor: Double, mipmaps: MutableList<FunScaleActivity.Mipmap>): Bitmap {
         if ((orig.width * scaleFactor).roundToInt() < 1 || (orig.height * scaleFactor).roundToInt() < 1) {
             val new = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -379,18 +496,24 @@ class IntermediateResults : Application() {
                     // fixes scaling from mipmaps giving wrong amount of pixels in width
                     val widthDiffFromFromBigger = (scaleDown * mipmaps[i - 1].width).roundToInt() - new.width
                     val widthDiffFromFromSmaller = (scaleUp * mipmaps[i].width).roundToInt() - new.width
-                    for (i in 0 until new.height) {
-                        for (j in 0 until new.width) {
-                            pixelsResulting[i * new.width + j] = Color.rgb(
-                                (Color.red(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.red(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
-
-                                (Color.green(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.green(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt(),
-
-                                (Color.blue(pixelsFromSmaller[i * (new.width + widthDiffFromFromSmaller) + j]) * (1 - weightOfBigger)
-                                        + Color.blue(pixelsFromBigger[i * (new.width + widthDiffFromFromBigger) + j]) * weightOfBigger).roundToInt()
-                            )
+                    runBlocking {
+                        coroutineScope {
+                            val n = 1275 // amount of coroutines to launch
+                            IntRange(0, n - 1).map {
+                                async(Dispatchers.Default) {
+                                    interpolateBetweenPixels(
+                                        it * new.height / n,
+                                        if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 },
+                                        new.width,
+                                        pixelsResulting,
+                                        weightOfBigger,
+                                        pixelsFromSmaller,
+                                        pixelsFromBigger,
+                                        widthDiffFromFromBigger,
+                                        widthDiffFromFromSmaller
+                                    )
+                                }
+                            }.awaitAll()
                         }
                     }
 
@@ -434,8 +557,6 @@ class IntermediateResults : Application() {
         }
     }
 
-    //цветокоррекция и цветовые фильтры
-    //фильтр "негатив"
     fun negativeFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -454,19 +575,41 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //фильтр "сепия"
+    private fun filter(rule: String, iMin: Int, iMax: Int, pixels: IntArray) {
+        when (rule) {
+            "s" -> /*{println("$iMin $iMax");*/ for (i in iMin..iMax) {
+                /*outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
+                outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
+                outputBlue = (inputRed * .272) + (inputGreen *.534) + (inputBlue * .131)
+
+                if greater than 255, round to 255*/
+                pixels[i] = Color.rgb(
+                    min(255, (0.393 * Color.red(pixels[i]) + 0.769 * Color.green(pixels[i]) + 0.189 * Color.blue(pixels[i])).roundToInt()),
+                    min(255, (0.349 * Color.red(pixels[i]) + 0.686 * Color.green(pixels[i]) + 0.168 * Color.blue(pixels[i])).roundToInt()),
+                    min(255, (0.272 * Color.red(pixels[i]) + 0.534 * Color.green(pixels[i]) + 0.131 * Color.blue(pixels[i])).roundToInt())
+                )
+            }
+        }
+    }
+
     fun sepiaFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
 
         orig.getPixels(pixels, 0, orig.width, 0, 0, orig.width, orig.height)
-        /*
-        outputRed = (inputRed * .393) + (inputGreen *.769) + (inputBlue * .189)
-        outputGreen = (inputRed * .349) + (inputGreen *.686) + (inputBlue * .168)
-        outputBlue = (inputRed * .272) + (inputGreen *.534) + (inputBlue * .131)
 
-        if greater than 255, round to 255
-        */
+        /*runBlocking {
+            coroutineScope {
+                val n = 2550 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        println(it * pixels.size / n)
+//                        println(if (it != n - 1) {(it + 1) * pixels.size / n - 1} else {pixels.size - 1})
+//                        filter("s", it * pixels.size / n, if (it != n - 1) {(it + 1) * pixels.size / n - 1} else {pixels.size - 1}, pixels)
+                    }
+                }.awaitAll()
+            }
+        }*/
         for (i in pixels.indices) {
             pixels[i] = Color.rgb(
                 min(255, (0.393 * Color.red(pixels[i]) + 0.769 * Color.green(pixels[i]) + 0.189 * Color.blue(pixels[i])).roundToInt()),
@@ -479,7 +622,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //чёрно-белый с оттенками серого
     fun grayScaleFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -497,7 +639,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //чёрно-белый фильтр
     fun blackAndWhiteFilter(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -518,7 +659,6 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //цветной фильтр
     fun coloredFilter(orig: Bitmap, col: Int): Bitmap {
         val new = Bitmap.createBitmap(orig.width, orig.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(orig.width * orig.height)
@@ -533,20 +673,41 @@ class IntermediateResults : Application() {
         return new
     }
 
-    //функция поворота изображения на 90 градусов
-    fun rotate90DegreesClockwise(orig: Bitmap): Bitmap {
+    private fun rotate90DegreesClockwise(orig: IntArray, new: IntArray, totalPixels: Int, ow: Int, nw: Int, iMin: Int, iMax: Int) {
+        for (i in iMin..iMax) {
+            for (j in 0 until nw) {
+                new[i * nw + j] = orig[totalPixels - (j + 1) * ow + i]
+            }
+        }
+    }
+
+    fun callRotate90DegreesClockwise(orig: Bitmap): Bitmap {
         val new = Bitmap.createBitmap(orig.height, orig.width, Bitmap.Config.ARGB_8888)
 
         val pixelsOrig = IntArray(orig.width * orig.height)
         val pixelsNew = IntArray(new.width * new.height)
         val pixelsCount = orig.width * orig.height
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
-        // it just uses "new.setPixel(j, i, orig.getPixel(i, orig.height - 1 - j))" formula in linear arrays, maybe can be simplified
-        for (i in 0 until new.height) {
-            for (j in 0 until new.width) {
-                pixelsNew[i * new.width + j] = pixelsOrig[pixelsCount - (j + 1) * orig.width + i]
+
+        runBlocking {
+            coroutineScope {
+                val n = 1275 // amount of coroutines to launch
+                IntRange(0, n - 1).map {
+                    async(Dispatchers.Default) {
+                        rotate90DegreesClockwise(
+                            pixelsOrig,
+                            pixelsNew,
+                            pixelsCount,
+                            orig.width,
+                            new.width,
+                            it * new.height / n,
+                            if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 }
+                        )
+                    }
+                }.awaitAll()
             }
         }
+
         new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
 
         return new
@@ -561,7 +722,8 @@ class IntermediateResults : Application() {
         iMin: Int,
         iMax:Int,
         bitmapWidth: Int,
-        maxPossibleY: Int
+        maxPossibleY: Int,
+        radius: Int
     ) {
         var convolvedHorizontallyRed = 0.0
         var convolvedHorizontallyGreen = 0.0
@@ -583,13 +745,13 @@ class IntermediateResults : Application() {
             for (j in 0 until bitmapWidth) {
                 // don't make convolution for boundary pixels?
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(bitmapWidth - 1, max(0, j + k))
+                    kAdjusted = min(bitmapWidth - 1, max(0, j + k - radius))
                     convolvedHorizontallyRed += Color.red(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                     convolvedHorizontallyGreen += Color.green(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                     convolvedHorizontallyBlue += Color.blue(pixelsOrig[i * bitmapWidth + kAdjusted]) * gaussianDistribution[k]
                 }
                 for (k in gaussianDistribution.indices) {
-                    kAdjusted = min(maxPossibleY, max(0, i + k))
+                    kAdjusted = min(maxPossibleY, max(0, i + k - radius))
                     convolvedVerticallyRed += Color.red(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
                     convolvedVerticallyGreen += Color.green(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
                     convolvedVerticallyBlue += Color.blue(pixelsOrig[kAdjusted * bitmapWidth + j]) * gaussianDistribution[k]
@@ -641,7 +803,7 @@ class IntermediateResults : Application() {
         orig.getPixels(pixelsOrig, 0, orig.width, 0, 0, orig.width, orig.height)
         runBlocking {
             coroutineScope {
-                val n = 100 // amount of coroutines to launch
+                val n = 1275 // amount of coroutines to launch
                 IntRange(0, n - 1).map {
                     async(Dispatchers.Default) {
                         unsharpMasking(
@@ -653,7 +815,8 @@ class IntermediateResults : Application() {
                             it * new.height / n,
                             if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 },
                             new.width,
-                            new.height - 1
+                            new.height - 1,
+                            radius
                         )
                     }
                 }.awaitAll()
@@ -663,4 +826,19 @@ class IntermediateResults : Application() {
         new.setPixels(pixelsNew, 0, new.width, 0, 0, new.width, new.height)
         return new
     }
+
+    /*runBlocking {
+        coroutineScope {
+            val n = 1275 // amount of coroutines to launch
+            IntRange(0, n - 1).map {
+                async(Dispatchers.Default) {
+                    for (i in (it * new.height / n)..(if (it != n - 1) { (it + 1) * new.height / n - 1 } else { new.height - 1 })) {
+                        for (j in 0 until new.width) {
+
+                        }
+                    }
+                }
+            }.awaitAll()
+        }
+    }*/
 }

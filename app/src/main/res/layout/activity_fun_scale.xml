@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    //textHeaderScale
     <TextView
         android:id="@+id/textHeaderScale"
         android:layout_width="wrap_content"
@@ -24,33 +25,35 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    //imageToEdit
     <ImageView
         android:id="@+id/imageToEdit"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginBottom="25dp"
         android:src="@drawable/ic_edit_image"
-        app:layout_constraintBottom_toTopOf="@+id/seekBarScale"
+        app:layout_constraintBottom_toTopOf="@+id/textModeScale"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    //seekBarScale
     <SeekBar
         android:id="@+id/seekBarScale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="25dp"
-        android:min="-5"
-        android:max="5"
+        android:max="20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.68"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.82" />
+        app:layout_constraintVertical_bias="0.84000003" />
 
+    //textSeekBarScale
     <TextView
         android:id="@+id/textSeekBarScale"
         android:layout_width="wrap_content"
@@ -61,8 +64,9 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.853" />
+        app:layout_constraintVertical_bias="0.87" />
 
+    //buttonCancel
     <Button
         android:id="@+id/buttonCancel"
         android:layout_width="wrap_content"
@@ -81,6 +85,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992" />
 
+    //buttonDone
     <Button
         android:id="@+id/buttonDone"
         android:layout_width="wrap_content"
@@ -96,5 +101,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992" />
+
+    //textModeScale
+    <TextView
+        android:id="@+id/textModeScale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textModeScale"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.76" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

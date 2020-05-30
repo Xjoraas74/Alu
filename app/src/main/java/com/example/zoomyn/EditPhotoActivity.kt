@@ -10,13 +10,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.jakewharton.processphoenix.ProcessPhoenix
 import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonBack
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
+import kotlinx.android.synthetic.main.activity_edit_photo.buttonUndo
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
+import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
+import kotlinx.android.synthetic.main.activity_edit_photo.textCancel
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
@@ -43,14 +47,17 @@ class EditPhotoActivity : AppCompatActivity() {
         val fileUri: Uri = intent.getParcelableExtra("imagePath")
         val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
 
-        //скрытие progress bar'а
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar) as ProgressBar
-        progressBar.visibility = View.INVISIBLE
+        println(fileUri)
+        println(pathToOriginal)
 
         //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
         val bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
         println("${bmpEditImage?.width} ${bmpEditImage?.height}")
+
         imageToEdit.setImageBitmap(bmpEditImage)
+
+        //скрытие progress bar'а
+        progressBar.visibility = View.GONE
 
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(
@@ -134,11 +141,9 @@ class EditPhotoActivity : AppCompatActivity() {
             backAlertDialog.setIcon(R.drawable.ic_keyboard_backspace)
             backAlertDialog.setTitle("Выход")
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
-            backAlertDialog.setPositiveButton("Назад") { dialog, id ->
+            backAlertDialog.setPositiveButton("Назад") { _, _ ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id ->
-                val intentNegativeButton = Intent(this, MainActivity::class.java)
-                startActivity(intentNegativeButton)
+            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this)
             }
             backAlertDialog.show()
         }
@@ -147,7 +152,9 @@ class EditPhotoActivity : AppCompatActivity() {
         buttonEdit.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+
             (application as IntermediateResults).bitmapsList.add(bitmap)
+
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -156,11 +163,17 @@ class EditPhotoActivity : AppCompatActivity() {
                 4 -> (application as IntermediateResults).functionCalls.add(4.0)
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
+
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
+
             val i = Intent(this, EditPhotoSecondScreenActivity::class.java)
             i.putExtra("imagePath", uriCurrentBitmap)
             i.putExtra("pathToOriginal", pathToOriginal)
+
+            println(uriCurrentBitmap)
+            println(pathToOriginal)
+
             startActivity(i)
         }
 
@@ -176,32 +189,17 @@ class EditPhotoActivity : AppCompatActivity() {
             }
 
             runBlocking {
-                val saving = CoroutineScope(Dispatchers.Default).async {
+                CoroutineScope(Dispatchers.Default).launch {
                     (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
                 }
 
                 //progress bar
-                progressBar.visibility = View.VISIBLE
-                println("shown")
 
-                //await finish saving, close progress bar, finish activity
-                saving.await()
-
-                progressBar.visibility = View.GONE
-                println("gone")
-
-//                val backAlertDialog = AlertDialog.Builder(this@EditPhotoActivity)
-//                backAlertDialog.setIcon(R.drawable.ic_save)
-//                backAlertDialog.setTitle("Выход")
-//                backAlertDialog.setMessage("Фотография успешно сохранена")
-//                backAlertDialog.setPositiveButton("Закрыть") { _, _ -> }
-//                backAlertDialog.show()
-
-                progressBar.visibility = View.GONE
+                //finish activity
             }
         }
 
-        //функционирование кнопки "undo"
+        //функционирование кнопки "Undo"
         textCancel.setOnClickListener {
             imageToEdit.setImageBitmap((application as IntermediateResults).undo((imageToEdit.drawable as BitmapDrawable).bitmap))
         }
@@ -212,17 +210,16 @@ class EditPhotoActivity : AppCompatActivity() {
 
     }
 
-    //функция для получения File из Bitmap
+    //функция для получения Uri из Bitmap
     private fun bitmapToFile(bitmap:Bitmap): Uri {
-
         val wrapper = ContextWrapper(applicationContext)
-        var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
 
+        var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {
@@ -250,7 +247,6 @@ class EditPhotoActivity : AppCompatActivity() {
             }
         }
         return inSampleSize
-
     }
 
     //основной метод декодирование исходного изображения
@@ -270,7 +266,5 @@ class EditPhotoActivity : AppCompatActivity() {
             BitmapFactory.decodeStream(newBitmap, null, this)
         }
         return bitmap
-
     }
-
 }

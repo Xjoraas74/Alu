@@ -9,6 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    //textHeaderTurn
     <TextView
         android:id="@+id/textHeaderTurn"
         android:layout_width="wrap_content"
@@ -24,97 +25,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+    //imageToEdit
     <ImageView
         android:id="@+id/imageToEdit"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="68dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="25dp"
         android:src="@drawable/ic_edit_image"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutScrollTurn"
+        app:layout_constraintBottom_toTopOf="@+id/textModeTurn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutScrollTurn"
+    //textSeekBarTurn
+
+    <TextView
+        android:id="@+id/textSeekBarTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginEnd="80dp"
-        android:layout_marginRight="80dp"
-        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.62"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.88">
+        app:layout_constraintVertical_bias="0.87" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
-            android:layout_marginRight="40dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textFirstMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:text="@string/nameFirstModeTurn"
-                android:textColor="@color/colorGray"
-                android:textSize="15sp" />
-
-            <ImageButton
-                android:id="@+id/button90degrees"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/btn_border_around"
-                android:src="@drawable/ic_rotate_90_degrees" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textSecondMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="10dp"
-                android:text="@string/nameOfSecondMode"
-                android:textColor="@color/colorGray"
-                android:textSize="15sp" />
-
-            <ImageButton
-                android:id="@+id/buttonArbitraryAngle"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/btn_border_around"
-                android:src="@drawable/ic_rotate"
-                android:layout_gravity="center"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
+    //buttonCancel
     <Button
         android:id="@+id/buttonCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@null"
-        android:stateListAnimator="@null"
         android:text="@string/cancel"
         android:textColor="@color/colorLightGray"
         android:textSize="17sp"
+        android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.23"
@@ -122,21 +71,65 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.991" />
 
+    //buttonDone
     <Button
         android:id="@+id/buttonDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@null"
-        android:stateListAnimator="@null"
         android:text="@string/done"
         android:textColor="@color/colorGray"
         android:textSize="17sp"
+        android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.77"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.991" />
+
+    //buttonRotate90
+    <ImageButton
+        android:id="@+id/buttonRotate90"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/ic_rotate_90_degrees"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/seekBarTurn"
+        app:layout_constraintHorizontal_bias="0.56"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.84000003" />
+
+    //seekBarTurn
+    <SeekBar
+        android:id="@+id/seekBarTurn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginLeft="120dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.83" />
+
+    //textModeTurn
+    <TextView
+        android:id="@+id/textModeTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textModeTurn"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.76" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

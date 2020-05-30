@@ -9,6 +9,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    //imageToEdit
     <ImageView
         android:id="@+id/imageToEdit"
         android:layout_width="0dp"
@@ -23,6 +24,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textCancel"
         app:layout_constraintVertical_bias="1.0" />
 
+    //buttonBack
     <ImageButton
         android:id="@+id/buttonBack"
         android:layout_width="wrap_content"
@@ -36,6 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.013" />
 
+    //buttonUndo
     <ImageButton
         android:id="@+id/buttonUndo"
         android:layout_width="wrap_content"
@@ -44,11 +47,12 @@
         android:src="@drawable/ic_undo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintHorizontal_bias="0.39"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023" />
 
+    //textCancel
     <Button
         android:id="@+id/textCancel"
         android:layout_width="wrap_content"
@@ -66,6 +70,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.013" />
 
+    //buttonSave
     <ImageButton
         android:id="@+id/buttonSave"
         android:layout_width="wrap_content"
@@ -79,6 +84,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023" />
 
+    //horizontalScrollView
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="0dp"
@@ -100,6 +106,7 @@
             android:id="@+id/linearLayoutScrollView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -123,6 +130,7 @@
                     android:id="@+id/buttonTurn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
                     android:src="@drawable/ic_turn" />
 
@@ -149,70 +157,73 @@
                     android:id="@+id/buttonScale"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/btn_border_around"
                     android:src="@drawable/ic_scale" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/linearLayoutThirdFun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearLayoutThirdFun"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="15dp"-->
+<!--                android:layout_marginRight="15dp"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/textThirdFun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/segmentation"
-                    android:textColor="@color/colorGray" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textThirdFun"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:text="@string/segmentation"-->
+<!--                    android:textColor="@color/colorGray" />-->
 
-                <ImageButton
-                    android:id="@+id/buttonSegmentation"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_segmentation" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/buttonSegmentation"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:background="@drawable/btn_border_around"-->
+<!--                    android:src="@drawable/ic_segmentation" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:id="@+id/linearLayoutFourthFun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginRight="15dp"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearLayoutFourthFun"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="15dp"-->
+<!--                android:layout_marginRight="15dp"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/textFourthFun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/retouch"
-                    android:textColor="@color/colorGray" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textFourthFun"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:text="@string/retouch"-->
+<!--                    android:textColor="@color/colorGray" />-->
 
-                <ImageButton
-                    android:id="@+id/buttonRetouch"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_retouch" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/buttonRetouch"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:background="@drawable/btn_border_around"-->
+<!--                    android:src="@drawable/ic_retouch" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/linearLayoutFifthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp">
 
                 <TextView
                     android:id="@+id/textFifthFun"
@@ -233,123 +244,128 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/linearLayoutSixthFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearLayoutSixthFilter"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="20dp"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/textSixthFun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/bilinearTrilinearFiltering"
-                    android:textColor="@color/colorGray" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textSixthFun"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:text="@string/bilinearTrilinearFiltering"-->
+<!--                    android:textColor="@color/colorGray" />-->
 
-                <ImageButton
-                    android:id="@+id/buttonBilinearFiltering"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_bilinear_filtering" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/buttonBilinearFiltering"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:background="@drawable/btn_border_around"-->
+<!--                    android:src="@drawable/ic_bilinear_filtering" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:id="@+id/linearLayoutSeventhFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearLayoutSeventhFilter"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="20dp"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/textSeventhFun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/bilinearTrilinearFiltering"
-                    android:textColor="@color/colorGray" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textSeventhFun"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:text="@string/bilinearTrilinearFiltering"-->
+<!--                    android:textColor="@color/colorGray" />-->
 
-                <ImageButton
-                    android:id="@+id/buttonTrilinearFiltering"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_trilinear_filtering"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/buttonTrilinearFiltering"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:background="@drawable/btn_border_around"-->
+<!--                    android:src="@drawable/ic_trilinear_filtering"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:id="@+id/linearLayoutEighthFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linearLayoutEighthFilter"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="20dp"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:orientation="vertical">-->
 
-                <TextView
-                    android:id="@+id/textEighthFun"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/interpolation"
-                    android:textColor="@color/colorGray" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textEighthFun"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:text="@string/interpolation"-->
+<!--                    android:textColor="@color/colorGray" />-->
 
-                <ImageButton
-                    android:id="@+id/buttonInterpolation"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/btn_border_around"
-                    android:src="@drawable/ic_interpolation" />
+<!--                <ImageButton-->
+<!--                    android:id="@+id/buttonInterpolation"-->
+<!--                    android:layout_width="80dp"-->
+<!--                    android:layout_height="80dp"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:background="@drawable/btn_border_around"-->
+<!--                    android:src="@drawable/ic_interpolation" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
         </LinearLayout>
 
     </HorizontalScrollView>
 
+    //buttonFilter
     <Button
         android:id="@+id/buttonFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:stateListAnimator="@null"
         android:text="@string/filter"
         android:textColor="@color/colorLightGray"
         android:textSize="17sp"
+        android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonEdit"
-        app:layout_constraintHorizontal_bias="0.318"
+        app:layout_constraintHorizontal_bias="0.39"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992" />
 
+    //buttonEdit
     <Button
         android:id="@+id/buttonEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:stateListAnimator="@null"
         android:text="@string/edit"
         android:textColor="@color/colorGray"
         android:textSize="17sp"
+        android:stateListAnimator="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.81"
+        app:layout_constraintHorizontal_bias="0.83"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992" />
 
+    //progressBar
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
