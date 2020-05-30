@@ -19,6 +19,8 @@ import java.io.OutputStream
 import kotlin.math.*
 
 class IntermediateResults : Application() {
+    // for undo
+    val bitmapsList = mutableListOf<Bitmap>()
 
     // to remember what functions must be called on original image
     val functionCalls = mutableListOf<Double>()
@@ -134,6 +136,41 @@ class IntermediateResults : Application() {
         println("EDITED, took ${(tEnd - tStart).toDouble() / 1000}")
         saveImage(resultList[0], context, "Zoomyn")
         println("ALL DONE")
+        bitmapsList.removeAll(bitmapsList)
+    }
+
+    fun undo(bitmapToUndo: Bitmap): Bitmap {
+        if (bitmapsList.count() > 1) {
+            var k = 0
+            var kPrev = k
+
+            while (k < functionCalls.count()) {
+                kPrev = k
+                when (functionCalls[k]) {
+                    1.0, 2.0, 3.0, 4.0, 7.0 -> k++
+                    5.0, 6.0, 8.0 -> k += 2
+                    9.0 -> k += 4
+                }
+            }
+            when (functionCalls[kPrev]) {
+                1.0, 2.0, 3.0, 4.0, 7.0 -> functionCalls.removeAt(functionCalls.lastIndex)
+                5.0, 6.0, 8.0 -> {
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                }
+                9.0 -> {
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                    functionCalls.removeAt(functionCalls.lastIndex)
+                }
+            }
+
+            bitmapsList.removeAt(bitmapsList.lastIndex)
+            return bitmapsList.last()
+        }
+
+        return bitmapToUndo
     }
 
     private fun _rotateClockwiseByDegrees(iCentreX: Int, iCentreY: Int, a: Double, nw: Int, ow: Int, pixelsOrig: IntArray, pixelsNew: IntArray, oh: Int, iMin: Int, iMax: Int) {

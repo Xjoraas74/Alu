@@ -11,9 +11,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -23,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_edit_photo.buttonEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.buttonSave
 import kotlinx.android.synthetic.main.activity_edit_photo.imageToEdit
 import kotlinx.android.synthetic.main.activity_edit_photo.progressBar
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
 import kotlinx.coroutines.*
 import java.io.*
 import java.util.*
@@ -49,12 +45,15 @@ class EditPhotoActivity : AppCompatActivity() {
         //получение фотографии
         val fileUri: Uri = intent.getParcelableExtra("imagePath")
         val pathToOriginal: Uri = intent.getParcelableExtra("pathToOriginal")
+
         println(fileUri)
         println(pathToOriginal)
 
         //конвертация полученного изображения в Bitmap в сжатой версии 1024*1024
         val bmpEditImage = decodeSampledBitmapFromFile(fileUri, 1024, 1024, this)
+
         println("${bmpEditImage?.width} ${bmpEditImage?.height}")
+
         imageToEdit.setImageBitmap(bmpEditImage)
 
         //скрытие progress bar'а
@@ -142,9 +141,9 @@ class EditPhotoActivity : AppCompatActivity() {
             backAlertDialog.setIcon(R.drawable.ic_keyboard_backspace)
             backAlertDialog.setTitle("Выход")
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
-            backAlertDialog.setPositiveButton("Назад") { dialog, id ->
+            backAlertDialog.setPositiveButton("Назад") { _, _ ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { dialog, id -> ProcessPhoenix.triggerRebirth(this)
+            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this)
             }
             backAlertDialog.show()
         }
@@ -170,10 +169,14 @@ class EditPhotoActivity : AppCompatActivity() {
 
             println(uriCurrentBitmap)
             println(pathToOriginal)
+
             startActivity(i)
         }
 
+        //функционирование кноки "Save"
         buttonSave.setOnClickListener {
+            progressBar.visibility = VISIBLE
+
             when (filter) {
                 0 -> {}
                 1 -> (application as IntermediateResults).functionCalls.add(1.0)
@@ -183,7 +186,7 @@ class EditPhotoActivity : AppCompatActivity() {
                 else -> (application as IntermediateResults).functionCalls.addAll(listOf(5.0, (filter - 5).toDouble()))
             }
 
-            progressBar.visibility = VISIBLE
+            println("onClickListener")
             CoroutineScope(Dispatchers.Default).launch {
                 (application as IntermediateResults).save(pathToOriginal, this@EditPhotoActivity)
                 println("launch 1")
@@ -219,6 +222,7 @@ class EditPhotoActivity : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
         return Uri.parse(file.absolutePath)
     }
 

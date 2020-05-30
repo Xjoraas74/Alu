@@ -106,12 +106,12 @@ class MainActivity : AppCompatActivity() {
             PERMISSION_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //разрешение от всплывающего окна предоставлено
-                   if (flagCamera) {
-                       openCamera()
-                   }
+                    if (flagCamera) {
+                        openCamera()
+                    }
                     else if (flagGallery) {
-                       pickImageFromGallery()
-                   }
+                        pickImageFromGallery()
+                    }
                 }
                 else {
                     //разрешение от всплывающего окна отклонено
@@ -155,4 +155,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-

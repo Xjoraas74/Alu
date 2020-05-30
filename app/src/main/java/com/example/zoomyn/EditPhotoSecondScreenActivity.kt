@@ -1,10 +1,8 @@
 package com.example.zoomyn
 
-import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -15,13 +13,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.processphoenix.ProcessPhoenix
-import kotlinx.android.synthetic.main.activity_edit_photo.*
 import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.*
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonBack
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonFilter
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.buttonSave
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.imageToEdit
-import kotlinx.android.synthetic.main.activity_edit_photo_second_screen.progressBar
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -58,7 +50,8 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             backAlertDialog.setMessage("Если вернуться в главное меню, изменения не будут сохранены")
             backAlertDialog.setPositiveButton("Назад") { dialog, id ->
             }
-            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this) }
+            backAlertDialog.setNegativeButton("Сбросить изменения") { _, _ -> ProcessPhoenix.triggerRebirth(this)
+            }
             backAlertDialog.show()
         }
 
@@ -66,11 +59,15 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
         buttonFilter.setOnClickListener {
             //получение изображения с применимыми фильтрами
             val bitmap = (imageToEdit.drawable as BitmapDrawable).bitmap
+
             //передача изображения в другое активити
             val uriCurrentBitmap = bitmapToFile(bitmap)
+
             val intentFilter = Intent(this, EditPhotoActivity::class.java)
+
             intentFilter.putExtra("imagePath", uriCurrentBitmap)
             intentFilter.putExtra("pathToOriginal", pathToOriginal)
+
             startActivity(intentFilter)
         }
 
@@ -86,6 +83,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             intentTurn.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentTurn)
         }
+
         //маскирование
         buttonMasking.setOnClickListener {
             //получение изображения с ImageView
@@ -97,6 +95,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             intentMasking.putExtra("pathToOriginal", pathToOriginal)
             startActivity(intentMasking)
         }
+
         //масштабирование
         buttonScale.setOnClickListener {
             //получение изображения с ImageView
@@ -109,6 +108,7 @@ class EditPhotoSecondScreenActivity : AppCompatActivity() {
             startActivity(intentScale)
         }
 
+        //функционирование кнопки "Save"
         buttonSave.setOnClickListener {
             progressBar.visibility = VISIBLE
             CoroutineScope(Dispatchers.Default).launch {

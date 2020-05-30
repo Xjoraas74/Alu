@@ -38,37 +38,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.013" />
 
-<!--    //buttonUndo-->
-<!--    <ImageButton-->
-<!--        android:id="@+id/buttonUndo"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@null"-->
-<!--        android:src="@drawable/ic_undo"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.39"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.023" />-->
+    <!--    //buttonUndo-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/buttonUndo"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:background="@null"-->
+    <!--        android:src="@drawable/ic_undo"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.39"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.023" />-->
 
-<!--    //textCancel-->
-<!--    <Button-->
-<!--        android:id="@+id/textCancel"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="2dp"-->
-<!--        android:background="@null"-->
-<!--        android:gravity="left|center"-->
-<!--        android:stateListAnimator="@null"-->
-<!--        android:text="@string/undo"-->
-<!--        android:textSize="16sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/buttonSave"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/buttonUndo"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.013" />-->
+    <!--    //textCancel-->
+    <!--    <Button-->
+    <!--        android:id="@+id/textCancel"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="2dp"-->
+    <!--        android:background="@null"-->
+    <!--        android:gravity="left|center"-->
+    <!--        android:stateListAnimator="@null"-->
+    <!--        android:text="@string/undo"-->
+    <!--        android:textSize="16sp"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toStartOf="@+id/buttonSave"-->
+    <!--        app:layout_constraintHorizontal_bias="0.0"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/buttonUndo"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.013" />-->
 
     //buttonSave
     <ImageButton
@@ -85,15 +85,17 @@
         app:layout_constraintVertical_bias="0.023" />
 
     //horizontalScrollView
+
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -163,67 +165,67 @@
 
             </LinearLayout>
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/linearLayoutThirdFun"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="15dp"-->
-<!--                android:layout_marginRight="15dp"-->
-<!--                android:orientation="vertical">-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/linearLayoutThirdFun"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="15dp"-->
+            <!--                android:layout_marginRight="15dp"-->
+            <!--                android:orientation="vertical">-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/textThirdFun"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:text="@string/segmentation"-->
-<!--                    android:textColor="@color/colorGray" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textThirdFun"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginBottom="10dp"-->
+            <!--                    android:text="@string/segmentation"-->
+            <!--                    android:textColor="@color/colorGray" />-->
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/buttonSegmentation"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@drawable/btn_border_around"-->
-<!--                    android:src="@drawable/ic_segmentation" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/buttonSegmentation"-->
+            <!--                    android:layout_width="80dp"-->
+            <!--                    android:layout_height="80dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/btn_border_around"-->
+            <!--                    android:src="@drawable/ic_segmentation" />-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/linearLayoutFourthFun"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="15dp"-->
-<!--                android:layout_marginRight="15dp"-->
-<!--                android:orientation="vertical">-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/linearLayoutFourthFun"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="15dp"-->
+            <!--                android:layout_marginRight="15dp"-->
+            <!--                android:orientation="vertical">-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/textFourthFun"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:text="@string/retouch"-->
-<!--                    android:textColor="@color/colorGray" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textFourthFun"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginBottom="10dp"-->
+            <!--                    android:text="@string/retouch"-->
+            <!--                    android:textColor="@color/colorGray" />-->
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/buttonRetouch"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@drawable/btn_border_around"-->
-<!--                    android:src="@drawable/ic_retouch" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/buttonRetouch"-->
+            <!--                    android:layout_width="80dp"-->
+            <!--                    android:layout_height="80dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/btn_border_around"-->
+            <!--                    android:src="@drawable/ic_retouch" />-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/linearLayoutFifthFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginEnd="0dp"
-                android:layout_marginRight="0dp">
+                android:layout_marginRight="0dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textFifthFun"
@@ -244,87 +246,87 @@
 
             </LinearLayout>
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/linearLayoutSixthFilter"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="20dp"-->
-<!--                android:layout_marginRight="20dp"-->
-<!--                android:orientation="vertical">-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/linearLayoutSixthFilter"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="20dp"-->
+            <!--                android:layout_marginRight="20dp"-->
+            <!--                android:orientation="vertical">-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/textSixthFun"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:text="@string/bilinearTrilinearFiltering"-->
-<!--                    android:textColor="@color/colorGray" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textSixthFun"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginBottom="10dp"-->
+            <!--                    android:text="@string/bilinearTrilinearFiltering"-->
+            <!--                    android:textColor="@color/colorGray" />-->
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/buttonBilinearFiltering"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@drawable/btn_border_around"-->
-<!--                    android:src="@drawable/ic_bilinear_filtering" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/buttonBilinearFiltering"-->
+            <!--                    android:layout_width="80dp"-->
+            <!--                    android:layout_height="80dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/btn_border_around"-->
+            <!--                    android:src="@drawable/ic_bilinear_filtering" />-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/linearLayoutSeventhFilter"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="20dp"-->
-<!--                android:layout_marginRight="20dp"-->
-<!--                android:orientation="vertical">-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/linearLayoutSeventhFilter"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="20dp"-->
+            <!--                android:layout_marginRight="20dp"-->
+            <!--                android:orientation="vertical">-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/textSeventhFun"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:text="@string/bilinearTrilinearFiltering"-->
-<!--                    android:textColor="@color/colorGray" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textSeventhFun"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginBottom="10dp"-->
+            <!--                    android:text="@string/bilinearTrilinearFiltering"-->
+            <!--                    android:textColor="@color/colorGray" />-->
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/buttonTrilinearFiltering"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@drawable/btn_border_around"-->
-<!--                    android:src="@drawable/ic_trilinear_filtering"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/buttonTrilinearFiltering"-->
+            <!--                    android:layout_width="80dp"-->
+            <!--                    android:layout_height="80dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/btn_border_around"-->
+            <!--                    android:src="@drawable/ic_trilinear_filtering"-->
+            <!--                    app:layout_constraintBottom_toBottomOf="parent" />-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/linearLayoutEighthFilter"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="20dp"-->
-<!--                android:layout_marginRight="20dp"-->
-<!--                android:orientation="vertical">-->
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/linearLayoutEighthFilter"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginEnd="20dp"-->
+            <!--                android:layout_marginRight="20dp"-->
+            <!--                android:orientation="vertical">-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/textEighthFun"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:text="@string/interpolation"-->
-<!--                    android:textColor="@color/colorGray" />-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/textEighthFun"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:layout_marginBottom="10dp"-->
+            <!--                    android:text="@string/interpolation"-->
+            <!--                    android:textColor="@color/colorGray" />-->
 
-<!--                <ImageButton-->
-<!--                    android:id="@+id/buttonInterpolation"-->
-<!--                    android:layout_width="80dp"-->
-<!--                    android:layout_height="80dp"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:background="@drawable/btn_border_around"-->
-<!--                    android:src="@drawable/ic_interpolation" />-->
+            <!--                <ImageButton-->
+            <!--                    android:id="@+id/buttonInterpolation"-->
+            <!--                    android:layout_width="80dp"-->
+            <!--                    android:layout_height="80dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:background="@drawable/btn_border_around"-->
+            <!--                    android:src="@drawable/ic_interpolation" />-->
 
-<!--            </LinearLayout>-->
+            <!--            </LinearLayout>-->
 
         </LinearLayout>
 

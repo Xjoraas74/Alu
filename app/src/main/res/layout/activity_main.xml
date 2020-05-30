@@ -45,20 +45,20 @@
         app:layout_constraintVertical_bias="0.833" />
 
     //gameButton
-<!--   <ImageButton-->
-<!--    android:id="@+id/buttonGame"-->
-<!--    android:layout_width="60dp"-->
-<!--    android:layout_height="60dp"-->
-<!--    android:background="@drawable/btn_rounded"-->
-<!--    android:src="@drawable/ic_3d_cube"-->
-<!--    android:textColor="@color/colorPurple"-->
-<!--    android:translationZ="10dp"-->
-<!--    android:elevation="10dp"-->
-<!--    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--    app:layout_constraintEnd_toEndOf="parent"-->
-<!--    app:layout_constraintStart_toStartOf="parent"-->
-<!--    app:layout_constraintTop_toTopOf="parent"-->
-<!--    app:layout_constraintVertical_bias="0.052" />-->
+    <!--   <ImageButton-->
+    <!--    android:id="@+id/buttonGame"-->
+    <!--    android:layout_width="60dp"-->
+    <!--    android:layout_height="60dp"-->
+    <!--    android:background="@drawable/btn_rounded"-->
+    <!--    android:src="@drawable/ic_3d_cube"-->
+    <!--    android:textColor="@color/colorPurple"-->
+    <!--    android:translationZ="10dp"-->
+    <!--    android:elevation="10dp"-->
+    <!--    app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--    app:layout_constraintEnd_toEndOf="parent"-->
+    <!--    app:layout_constraintStart_toStartOf="parent"-->
+    <!--    app:layout_constraintTop_toTopOf="parent"-->
+    <!--    app:layout_constraintVertical_bias="0.052" />-->
 
     //textCamera
     <TextView
@@ -99,4 +99,3 @@
         app:layout_constraintVertical_bias="0.085" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
