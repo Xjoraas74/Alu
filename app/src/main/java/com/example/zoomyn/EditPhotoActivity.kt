@@ -58,6 +58,9 @@ class EditPhotoActivity : AppCompatActivity() {
         println("${bmpEditImage?.width} ${bmpEditImage?.height}")
         imageToEdit.setImageBitmap(bmpEditImage)
 
+        //скрытие progress bar'а
+        progressBar.visibility = View.GONE
+
         //создание изображения на кнопках выбора фильтра
         var buttonChooseFilters = Bitmap.createBitmap(
             bmpEditImage!!.width,
